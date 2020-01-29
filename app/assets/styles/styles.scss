@@ -1,0 +1,192 @@
+/* -----  Bulma ----- */
+@import "bulma.scss";
+
+/* ----- NProgress ----- */
+@import "nprogress.scss";
+
+/* ----- Animation ----- */
+@import "animation.scss";
+
+/* ----- Styles Pages ----- */
+
+// General
+html {
+  overflow: hidden;
+}
+
+// Layout
+.granger__layout-content {
+  overflow-y: scroll;
+  height: calc(100vh - 52px);
+  overflow-x: hidden;
+}
+
+.granger__layout-content::-webkit-scrollbar {
+  width: 10px;
+}
+
+.granger__layout-content::-webkit-scrollbar-track {
+  border-left: 1px solid rgba(121, 87, 213, 0.2);
+}
+
+.granger__layout-content::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
+  outline: 1px solid slategrey;
+}
+
+// BookCard
+.granger__product-card {
+  height: 300px;
+  border-radius: 8px;
+  margin: 10px;
+  -webkit-box-shadow: 3px 3px 10px 0px rgba(121, 87, 213, 0.5);
+  -moz-box-shadow: 3px 3px 10px 0px rgba(121, 87, 213, 0.5);
+  box-shadow: 3px 3px 10px 0px rgba(121, 87, 213, 0.5);
+  position: relative;
+  transition: top ease 0.3s;
+  top: 0px;
+
+  .granger__product-card-image {
+    height: 160px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+
+    .granger__product-btn-fav {
+      color: $red;
+      background-color: transparent;
+      border: none;
+      position: absolute;
+      top: 10px;
+      right: 0px;
+      padding: 0;
+      font-size: 20px;
+      opacity: 0;
+      transition: all 300ms ease-in;
+    }
+    .granger__product-btn-fav::before {
+      background-color: #fff;
+      border-radius: 5px;
+      color: $info;
+      content: attr(data-title);
+      font-size: 12px;
+      padding: 0px 5px;
+      position: absolute;
+      right: 35px;
+      top: 5px;
+      width: 120px;
+      z-index: 1;
+      opacity: 0;
+      transition: all 300ms ease-in;
+    }
+    .granger__product-btn-fav:hover {
+      background-color: transparent;
+      color: $primary;
+    }
+  }
+
+  .granger__product-card-details {
+    background-color: rgba(255, 255, 255, 255.7);
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .granger__product-buy {
+    position: absolute;
+    bottom: 10px;
+
+    span {
+      color: $info;
+      font-weight: bold;
+    }
+
+    .button {
+      width: 100px;
+    }
+  }
+}
+
+.granger__product-card:hover {
+  top: -10px;
+
+  .granger__product-btn-fav {
+    opacity: 1;
+    right: 10px;
+    transition: all 300ms ease-in;
+  }
+
+  .granger__product-btn-fav:hover::before {
+    opacity: 1;
+  }
+
+  .granger__product-buy {
+    button {
+      background-color: $info;
+    }
+
+    button:hover {
+      background-color: #47326b;
+    }
+  }
+}
+
+@media (max-width: 769px) {
+  .granger__product-card {
+    height: 270px;
+
+    .granger__product-buy {
+      .button {
+        width: 200px;
+      }
+    }
+  }
+}
+
+@media (max-width: 425px) {
+  .granger__product-card {
+    height: 300px;
+
+    .granger__product-buy {
+      .button {
+        width: 200px;
+      }
+    }
+  }
+}
+
+// Modal
+@media (max-width: 768px) {
+  .modal {
+    padding: 10px;
+  }
+}
+
+// Session page
+.granger__session-page-container {
+  height: calc(100vh - 52px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .card {
+    width: 450px;
+    margin: 50px;
+  }
+}
+
+@media (max-width: 768px) {
+  .granger__session-page-container {
+    .card {
+      width: 100%;
+    }
+  }
+}
