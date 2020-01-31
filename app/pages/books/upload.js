@@ -17,7 +17,7 @@ const UploadBook = () => {
     const formData = new FormData();
     formData.append("bookCover", cover);
     await axios
-      .post("/api/books/upload", formData)
+      .post("http://localhost:4000/api/books/upload", formData)
       .then(res => {
         console.log(res);
       })

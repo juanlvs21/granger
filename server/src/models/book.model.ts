@@ -14,6 +14,7 @@ export interface IBook extends Document {
   genre?: [string];
   price: number;
   quantity: number;
+  stars: number;
   uploadedBy: IUser;
   created_date: string;
 }
@@ -27,6 +28,7 @@ const bookSchema = new Schema({
   genre: { type: [String] },
   price: { type: Number, required: true },
   quantity: { type: Number, required: true },
+  stars: { type: Number, required: false, default: 0 },
   uploadedBy: { type: Map, required: true },
   created_date: { type: String, required: true }
 });
