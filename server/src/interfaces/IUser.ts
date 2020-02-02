@@ -1,0 +1,18 @@
+import { Document } from "mongoose";
+
+// Interface
+import IBook from "./IBook";
+
+export default interface IUser extends Document {
+  _id: string;
+  uuid: string;
+  email: string;
+  password: string | string;
+  firstName: string;
+  lastName: string;
+  admin: boolean;
+  favorites?: [IBook];
+  created_date: string;
+  encryptPassword(password: string): Promise<string>;
+  validatePassword(password: string): Promise<boolean>;
+}

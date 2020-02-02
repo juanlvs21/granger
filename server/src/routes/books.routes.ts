@@ -1,13 +1,13 @@
 import { Router } from "express";
 
 // Controllers
-import { upload } from "../controllers/books.controller";
+import { uploadCover } from "../controllers/books.controller";
 
-// Multer
-import uploadMulter from "../multer";
+// Middlewares
+import { validateToken } from "../utils/validateToken";
 
 const router: Router = Router();
 
-router.post("/upload", uploadMulter.single("bookCover"), upload);
+router.post("/upload/cover", validateToken, uploadCover);
 
 export default router;

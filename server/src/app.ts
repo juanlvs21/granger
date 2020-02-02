@@ -2,6 +2,7 @@ import express, { Application } from "express";
 import path from "path";
 import morgan from "morgan";
 import cors from "cors";
+import fileUpload from "express-fileupload";
 
 import authRoutes from "./routes/auth.routes";
 import booksRoutes from "./routes/books.routes";
@@ -11,9 +12,17 @@ const app: Application = express();
 // Settings
 app.set("port", 4000);
 
+// Enable files upload
+app.use(
+  fileUpload({
+    createParentPath: true
+  })
+);
+
 // Middlewares
 app.use(morgan("dev"));
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: "*" }));
 
 // Routes
@@ -21,6 +30,6 @@ app.use("/api/auth", authRoutes);
 app.use("/api/books", booksRoutes);
 
 // Routes Static
-app.use("/uploads", express.static("/uploads"));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 export default app;

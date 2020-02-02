@@ -3,11 +3,8 @@ import { Router } from "express";
 // Controllers
 import { signin, signup, token } from "../controllers/auth.controller";
 
-// Middlewares
-import { TokenValidation } from "../libs/verifyToken";
-
 // Express-validator
-import { validateEmail, validatePassword } from "../libs/validateInputs";
+import { validateEmail, validatePassword } from "../utils/validateInputs";
 
 const router: Router = Router();
 

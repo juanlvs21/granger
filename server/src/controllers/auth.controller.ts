@@ -4,11 +4,15 @@ import jwt from "jsonwebtoken";
 import { validationResult } from "express-validator";
 
 // Models
-import User, { IUser } from "../models/user.model";
+import User from "../models/user.model";
+
+// Interfaces
+import IUser from "../interfaces/IUser";
+import IPayloadJWT from "../interfaces/IPayloadJWT";
 
 // Libs
-import msgResponse from "../libs/msgResponse";
-import msgResponseValidatorInputs from "../libs/msgResponseValidatorInputs";
+import msgResponse from "../utils/msgResponse";
+import msgResponseValidatorInputs from "../utils/msgResponseValidatorInputs";
 
 export const signup = async (req: Request, res: Response) => {
   try {
@@ -150,10 +154,10 @@ export const token = async (req: Request, res: Response) => {
   try {
     const { token } = req.body;
 
-    const payload: any = await jwt.verify(
+    const payload = jwt.verify(
       token,
       process.env.SECRET || "test-token"
-    );
+    ) as IPayloadJWT;
 
     const user: any = await User.findOne({ _id: payload._id });
 

@@ -1,5 +1,15 @@
+import { FileArray } from "express-fileupload";
+
 declare namespace Express {
   export interface Request {
-    userId: string;
+    files: FileArray;
+  }
+}
+
+declare global {
+  namespace Express {
+    export interface Request {
+      userId: string;
+    }
   }
 }

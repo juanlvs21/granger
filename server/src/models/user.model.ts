@@ -1,23 +1,8 @@
-import { Schema, model, Document } from "mongoose";
+import { Schema, model } from "mongoose";
 import bcrypt from "bcrypt";
 import moment from "moment";
 
-// Interface
-import { IBook } from "./book.model";
-
-export interface IUser extends Document {
-  _id: string;
-  uuid: string;
-  email: string;
-  password: string | string;
-  firstName: string;
-  lastName: string;
-  admin: boolean;
-  favorites?: [IBook];
-  created_date: string;
-  encryptPassword(password: string): Promise<string>;
-  validatePassword(password: string): Promise<boolean>;
-}
+import IUser from "../interfaces/IUser";
 
 // Schema
 const userSchema = new Schema({
@@ -26,7 +11,7 @@ const userSchema = new Schema({
   password: { type: String, required: true, min: 6 },
   firstName: { type: String },
   lastName: { type: String },
-  admin: { type: Boolean, required: true, default: false },
+  admin: { type: Boolean, required: true, default: true },
   favorites: { type: [{}], default: [] },
   created_date: {
     type: String,

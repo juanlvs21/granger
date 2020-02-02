@@ -5,13 +5,9 @@ import jwt from "jsonwebtoken";
 import msgResponse from "./msgResponse";
 
 // Interface
-interface IPayload {
-  _id: string;
-  iat: number;
-  exp: number;
-}
+import IPayloadJWT from "../interfaces/IPayloadJWT";
 
-export const TokenValidation = (
+export const validateToken = (
   req: Request,
   res: Response,
   next: NextFunction
@@ -33,7 +29,7 @@ export const TokenValidation = (
     const payload = jwt.verify(
       token,
       process.env.SECRET || "test-token"
-    ) as IPayload;
+    ) as IPayloadJWT;
 
     req.userId = payload._id;
   } catch (error) {

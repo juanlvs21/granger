@@ -41,7 +41,7 @@ const Signup = ({ actions }) => {
       setTimeout(() => setError(null), 5000);
     } else {
       await axios
-        .post("http:://localhost:4000/api/auth/signup", {
+        .post("http://localhost:4000/api/auth/signup", {
           firstName: newUser.firstName,
           lastName: newUser.lastName,
           email: newUser.email,
@@ -53,7 +53,7 @@ const Signup = ({ actions }) => {
             setTimeout(() => setError(null), 5000);
           } else {
             actions.login(data.data);
-            Router.push("/");
+            Router.replace("/");
           }
         })
         .catch(err => console.log(err))
