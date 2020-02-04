@@ -18,6 +18,22 @@ export const signup = async (req: Request, res: Response) => {
   try {
     const { email, password, firstName, lastName } = req.body;
 
+    // Now, it is verified that the fields are not empty
+    if (
+      email.trim() == "" ||
+      password.trim() == "" ||
+      firstName.trim() == "" ||
+      lastName.trim() == ""
+    )
+      return msgResponse(
+        res,
+        400,
+        "auth/fields-cannot-be-empty",
+        "The fields cannot be empty",
+        "Los campos no pueden estar vacíos",
+        null
+      );
+
     // Search user by email
     const userExists = await User.findOne({ email });
 
@@ -25,7 +41,7 @@ export const signup = async (req: Request, res: Response) => {
     if (userExists)
       return msgResponse(
         res,
-        200,
+        400,
         "auth/user-exists",
         "Email already registered",
         "Correo electrónico ya registrado",

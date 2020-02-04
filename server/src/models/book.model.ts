@@ -20,7 +20,9 @@ const bookSchema = new Schema({
     required: true,
     default: moment().toISOString()
   },
-  folder: { type: String, required: true }
+  folder: { type: String, required: true },
+  cover: { type: String, required: true },
+  pdf: { type: String, required: true }
 });
 
 export default model<IBook>("Book", bookSchema);

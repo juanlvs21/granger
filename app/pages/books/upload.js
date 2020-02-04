@@ -41,12 +41,17 @@ const UploadBook = ({ state }) => {
 
   const onChangeFile = e => {
     if (e.target.name === "cover") {
-      setCover(e.target.files[0]);
-      const reader = new FileReader();
-      reader.readAsDataURL(e.target.files[0]);
-      reader.onload = () => {
-        setPreview(reader.result);
-      };
+      if (e.target.files[0]) {
+        setCover(e.target.files[0]);
+        const reader = new FileReader();
+        reader.readAsDataURL(e.target.files[0]);
+        reader.onload = () => {
+          setPreview(reader.result);
+        };
+      } else {
+        setCover(null);
+        setPreview(null);
+      }
     } else if (e.target.name === "pdf") {
       setPdf(e.target.files[0]);
     }
@@ -58,7 +63,26 @@ const UploadBook = ({ state }) => {
         ...book,
         [e.target.name]: e.target.value > 0 ? e.target.value : 1
       });
+    } else if (e.target.name === "yearPublication") {
+      const year = new Date().getFullYear();
+      if (e.target.value <= 0) {
+        setBook({
+          ...book,
+          [e.target.name]: 1
+        });
+      } else if (e.target.value >= year) {
+        setBook({
+          ...book,
+          [e.target.name]: year
+        });
+      } else {
+        setBook({
+          ...book,
+          [e.target.name]: e.target.value
+        });
+      }
     } else {
+      console.log(e.target);
       setBook({
         ...book,
         [e.target.name]: e.target.value
@@ -85,11 +109,31 @@ const UploadBook = ({ state }) => {
         Router.push(`/books/${data.data}`);
       })
       .catch(err => {
-        if (err.response.data.code === "auth/authentication-required") {
-          console.log(err.response.data.message.es);
+        if (
+          err.response.data.code === "auth/authentication-required" ||
+          err.response.data.code === "books/cover-pdf-is-required" ||
+          err.response.data.code === "books/cover-is-required" ||
+          err.response.data.code === "books/cover-must-be-jpg-jpeg-png" ||
+          err.response.data.code === "books/book-must-be-pdf" ||
+          err.response.data.code === "books/pdf-is-required" ||
+          err.response.data.code === "books/name-is-empty" ||
+          err.response.data.code === "books/price-quantity-greater-than-zero" ||
+          err.response.data.code ===
+            "books/price-quantity-year-must-be-numbers" ||
+          err.response.data.code === "books/year-publication-less-current-year"
+        ) {
+          setError(err.response.data.message.es);
+          setTimeout(() => setError(null), 5000);
+        } else {
+          setError("Error desconocido");
+          setTimeout(() => setError(null), 5000);
         }
       })
       .finally(() => setLoading(false));
+  };
+
+  const closeNotification = () => {
+    setError(null);
   };
 
   return (
@@ -190,7 +234,7 @@ const UploadBook = ({ state }) => {
                 <div className="control">
                   <input
                     className="input is-info is-rounded"
-                    type="text"
+                    type="number"
                     placeholder="Año de publicación"
                     name="yearPublication"
                     value={book.yearPublication}

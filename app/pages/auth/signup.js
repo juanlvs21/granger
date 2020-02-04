@@ -48,15 +48,24 @@ const Signup = ({ actions }) => {
           password: newUser.password
         })
         .then(({ data }) => {
-          if (data.code == "auth/user-exists") {
-            setError(data.message.es);
-            setTimeout(() => setError(null), 5000);
-          } else {
+          if (data.code == "auth/sign-up-succesfully") {
             actions.login(data.data);
             Router.replace("/");
           }
         })
-        .catch(err => console.log(err))
+        .catch(err => {
+          console.log(err.response);
+          if (
+            err.response.data.code === "auth/fields-cannot-be-empty" ||
+            err.response.data.code === "auth/user-exists"
+          ) {
+            setError(err.response.data.message.es);
+            setTimeout(() => setError(null), 5000);
+          } else {
+            setError("Error desconocido");
+            setTimeout(() => setError(null), 5000);
+          }
+        })
         .finally(() => setLoading(false));
     }
   };

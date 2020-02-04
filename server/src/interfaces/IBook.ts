@@ -14,4 +14,6 @@ export default interface IBook extends Document {
   uploadedBy: {};
   created_date: string;
   folder: string;
+  cover: string;
+  pdf: string;
 }
