@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Head from "next/head";
+import axios from "axios";
 
 // Actions
 import { showMenuMobileAction } from "../store/actions/appActions";
@@ -9,47 +10,27 @@ import Carousel from "../components/home/Carousel";
 import BookCard from "../components/book/BookCard";
 
 const Home = () => {
-  const [books, setBooks] = useState([
-    {
-      id: 1,
-      title: "Harry Potter y la Piedra Filosofal",
-      img: "/books/cover/hppf.jpg",
-      price: 100
-    },
-    {
-      id: 2,
-      title: "Harry Potter y el Caliz de Fuego",
-      img: "/books/cover/hppf.jpg",
-      price: 80
-    },
-    {
-      id: 3,
-      title: "Harry Potter y la Camara de los Secretos",
-      img: "/books/cover/hppf.jpg",
-      price: 95
-    },
-    {
-      id: 4,
-      title: "Harry Potter y las Reliquias de la Muerte",
-      img: "/books/cover/hppf.jpg",
-      price: 105
-    },
-    {
-      id: 5,
-      title: "Harry Potter y el Principe Mestizo",
-      img: "/books/cover/hppf.jpg",
-      price: 95
-    },
-    {
-      id: 6,
-      title: "Harry Potter y la Orden de Fenix",
-      img: "/books/cover/hppf.jpg",
-      price: 95
+  const [books, setBooks] = useState([]);
+
+  useEffect(() => {
+    async function getAllBooks() {
+      await axios
+        .get("http://localhost:4000/api/books/all")
+        .then(({ data }) => {
+          setBooks(data.data);
+        })
+        .catch(err => {
+          console.log(err);
+        });
     }
-  ]);
+
+    if (books.length == 0) {
+      getAllBooks();
+    }
+  });
 
   const renderBooks = books.map(book => (
-    <div className="column is-3" key={book.id}>
+    <div className="column is-3" key={book._id}>
       <BookCard book={book} />
     </div>
   ));

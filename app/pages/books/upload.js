@@ -82,7 +82,6 @@ const UploadBook = ({ state }) => {
         });
       }
     } else {
-      console.log(e.target);
       setBook({
         ...book,
         [e.target.name]: e.target.value
@@ -100,7 +99,7 @@ const UploadBook = ({ state }) => {
     formData.append("book", JSON.stringify(book));
 
     await axios
-      .post("http://localhost:4000/api/books/upload/cover", formData, {
+      .post("http://localhost:4000/api/books/upload", formData, {
         headers: {
           authorization: state.user.token
         }

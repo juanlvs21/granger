@@ -103,67 +103,80 @@ export const signup = async (req: Request, res: Response) => {
 };
 
 export const signin = async (req: Request, res: Response) => {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    if (errors.array) return msgResponseValidatorInputs(res, errors.array());
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      if (errors.array) return msgResponseValidatorInputs(res, errors.array());
+    }
+
+    const user = await User.findOne({ email });
+
+    // If the user does not exist
+    if (!user)
+      return msgResponse(
+        res,
+        400,
+        "auth/Wrong-email-or-password",
+        "Wrong email or password",
+        "Correo o contraseña equivocada",
+        null
+      );
+
+    const correctPassword: boolean = await user.validatePassword(password);
+
+    // If the password is incorrect
+    if (!correctPassword)
+      return msgResponse(
+        res,
+        400,
+        "auth/Wrong-email-or-password",
+        "Wrong email or password",
+        "Correo o contraseña equivocada",
+        null
+      );
+
+    // The same message is placed if the user does not exist or if the password is incorrect since specifying the input problem can cause security problems
+
+    // Creating jsonwebtoken
+    const token: string = jwt.sign(
+      { _id: user._id },
+      process.env.SECRET || "test-token"
+    );
+
+    // Creating response User
+    const responseUser = {
+      uuid: user.uuid,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      admin: user.admin,
+      created_date: user.created_date,
+      token
+    };
+
+    // Response
+    msgResponse(
+      res,
+      200,
+      "auth/sign-in-successfully",
+      "Session successfully started",
+      "Sesión iniciada correctamente",
+      responseUser
+    );
+  } catch (err) {
+    console.log(err);
+    // Response catch error
+    msgResponse(
+      res,
+      500,
+      "auth/user-unregistered",
+      "Unregistered user, try again",
+      "Usuario no registrado, intente de nuevo",
+      null
+    );
   }
-
-  const user = await User.findOne({ email });
-
-  // If the user does not exist
-  if (!user)
-    return msgResponse(
-      res,
-      400,
-      "auth/Wrong-email-or-password",
-      "Wrong email or password",
-      "Correo o contraseña equivocada",
-      null
-    );
-
-  const correctPassword: boolean = await user.validatePassword(password);
-
-  // If the password is incorrect
-  if (!correctPassword)
-    return msgResponse(
-      res,
-      400,
-      "auth/Wrong-email-or-password",
-      "Wrong email or password",
-      "Correo o contraseña equivocada",
-      null
-    );
-
-  // The same message is placed if the user does not exist or if the password is incorrect since specifying the input problem can cause security problems
-
-  // Creating jsonwebtoken
-  const token: string = jwt.sign(
-    { _id: user._id },
-    process.env.SECRET || "test-token"
-  );
-
-  // Creating response User
-  const responseUser = {
-    uuid: user.uuid,
-    email: user.email,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    admin: user.admin,
-    created_date: user.created_date,
-    token
-  };
-
-  // Response
-  msgResponse(
-    res,
-    200,
-    "auth/sign-in-successfully",
-    "Session successfully started",
-    "Sesión iniciada correctamente",
-    responseUser
-  );
 };
 
 export const token = async (req: Request, res: Response) => {

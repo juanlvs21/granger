@@ -10,7 +10,7 @@ import IBook from "../interfaces/IBook";
 // Libs
 import msgResponse from "../utils/msgResponse";
 
-export const uploadCover = async (req: Request, res: Response) => {
+export const upload = async (req: Request, res: Response) => {
   try {
     // It is verified that there is at least one of the files, otherwise the req.files object will be null and will lead to an error
     if (!req.files)
@@ -146,10 +146,11 @@ export const uploadCover = async (req: Request, res: Response) => {
       .join("-");
 
     // Creating new book
+    const datetime = new Date().getTime();
     const book: IBook = new Book({
       ...BookJSONReceived,
       uuid: uuid.v1(),
-      folder: folder,
+      folder: `${folder}-${datetime}`,
       cover: cover.name,
       pdf: pdf.name
     });
@@ -158,9 +159,8 @@ export const uploadCover = async (req: Request, res: Response) => {
     const savedBook: IBook = await book.save();
 
     // Saving files on the server
-    const datetime = new Date().getTime();
-    cover.mv(`./dist/uploads/${folder}-${datetime}/cover/${cover.name}`);
-    pdf.mv(`./dist/uploads/${folder}-${datetime}/pdf/${pdf.name}`);
+    cover.mv(`./dist/uploads/cover/${book.folder}/${cover.name}`);
+    pdf.mv(`./dist/uploads/pdf/${book.folder}/${pdf.name}`);
 
     // Response
     msgResponse(
@@ -172,7 +172,6 @@ export const uploadCover = async (req: Request, res: Response) => {
       savedBook.uuid
     );
   } catch (err) {
-    console.log(err);
     // Response catch error
     msgResponse(
       res,
@@ -180,6 +179,32 @@ export const uploadCover = async (req: Request, res: Response) => {
       "books/unsaved",
       "Unsaved book, try again",
       "Libro no guardado, intente de nuevo",
+      null
+    );
+  }
+};
+
+export const all = async (req: Request, res: Response) => {
+  try {
+    const books = await Book.find();
+    // Response catch error
+    msgResponse(
+      res,
+      200,
+      "books/get-all",
+      "Get all the books",
+      "Obtener todos los libros",
+      books
+    );
+  } catch (err) {
+    console.log(err);
+    // Response catch error
+    msgResponse(
+      res,
+      500,
+      "books/error-loading",
+      "Error loading books",
+      "Error al cargar los libros",
       null
     );
   }

@@ -4,12 +4,14 @@ import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 
-const BookCard = props => {
+const BookCard = ({ book }) => {
   return (
     <div className="granger__product-card">
       <div
         className="granger__product-card-image"
-        style={{ backgroundImage: `url('${props.book.img}')` }}
+        style={{
+          backgroundImage: `url('http://localhost:4000/uploads/cover/${book.folder}/${book.cover}')`
+        }}
       >
         <button
           className="granger__product-btn-fav"
@@ -19,13 +21,13 @@ const BookCard = props => {
         </button>
       </div>
       <div className="granger__product-card-details">
-        <h1 className="has-text-weight-semibold">{props.book.title}</h1>
+        <h1 className="has-text-weight-semibold">{book.title}</h1>
 
         <div className="granger__product-buy">
           <span>$100</span>
           <button
             className="button is-small is-primary is-rounded is-fullwidth"
-            id={`granger__product-btn-${props.book.id}`}
+            id={`granger__product-btn-${book.id}`}
           >
             Comprar
           </button>

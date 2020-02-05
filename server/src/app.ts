@@ -30,6 +30,9 @@ app.use("/api/auth", authRoutes);
 app.use("/api/books", booksRoutes);
 
 // Routes Static
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use(
+  "/uploads/cover",
+  express.static(path.join(__dirname, "uploads/cover"))
+);
 
 export default app;

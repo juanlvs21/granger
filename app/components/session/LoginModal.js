@@ -39,17 +39,25 @@ const LoginModal = ({ state, actions }) => {
         password: user.password
       })
       .then(({ data }) => {
-        if (data.code == "auth/Wrong-email-or-password") {
-          setError(data.message.es);
+        nookies.set({}, "token", data.data.token); // Cookie token user
+        actions.login(data.data);
+        handleCloseModal();
+      })
+      .catch(err => {
+        console.log(err);
+        if (err.response.data.code == "auth/Wrong-email-or-password") {
+          setError(err.response.data.message.es);
           setTimeout(() => setError(null), 5000);
         } else {
-          nookies.set({}, "token", data.data.token); // Cookie token user
-          actions.login(data.data);
-          handleCloseModal();
+          setError("Error desconocido");
+          setTimeout(() => setError(null), 5000);
         }
       })
-      .catch(err => console.log(err))
       .finally(() => setLoading(false));
+  };
+
+  const closeNotification = () => {
+    setError(null);
   };
 
   return (
