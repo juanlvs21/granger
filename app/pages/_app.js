@@ -1,7 +1,6 @@
 import React from "react";
 import App from "next/app";
 import Router from "next/router";
-import axios from "axios";
 import NProgress from "nprogress";
 import withRedux from "next-redux-wrapper";
 import { Provider } from "react-redux";
@@ -20,6 +19,9 @@ import makeStore from "../store/store";
 // Actions
 import { loginAction } from "../store/actions/sessionActions";
 
+// Service API
+import API from "../utils/API";
+
 // Router Progress bar
 Router.events.on("routeChangeStart", url => {
   // console.log(`Loading: ${url}`)
@@ -36,11 +38,11 @@ class MyApp extends App {
 
     const { token } = nookies.get(ctx);
 
+    const service = new API();
+
     if (token) {
-      await axios
-        .post("http://localhost:4000/api/auth/token", {
-          token
-        })
+      service
+        .token(token)
         .then(({ data }) => {
           nookies.set({}, "token", data.data.token); // Cookie token user
           ctx.store.dispatch(loginAction(data.data));
