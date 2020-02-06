@@ -12,7 +12,7 @@ services:
     depends_on:
       - server
     volumes:
-      - app:/usr/src/granger/app:
+      - .:/usr/src/granger/app:
       - /usr/src/granger/app/node_modules
 
   server:
@@ -26,7 +26,7 @@ services:
     depends_on:
       - db
     volumes:
-      - server:/usr/src/granger/server:
+      - .:/usr/src/granger/server:
       - /usr/src/granger/server/node_modules
 
   db:
