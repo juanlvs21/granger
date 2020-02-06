@@ -2,18 +2,32 @@ version: "3"
 
 services:
   app:
-    build: ./app
+    build:
+      context: ./app
+      dockerfile: Dockerfile
     environment:
-      - URL_SERVER: http://server:4000
+      URL_SERVER: "http://server:4000"
     ports:
       - "3000:3000"
+    depends_on:
+      - server
+    volumes:
+      - ./app:/usr/src/granger/app:
+      - /usr/src/granger/app/node_modules
 
   server:
-    build: ./server
+    build:
+      context: ./server
+      dockerfile: Dockerfile
     environment:
-      - URL_DB: mongodb://db:27017/granger
+      URL_DB: "mongodb://db:27017/granger"
+    ports:
+      - "4000"
     depends_on:
       - db
+    volumes:
+      - ./server:/usr/src/granger/server:
+      - /usr/src/granger/server/node_modules
 
   db:
     image: mongo
