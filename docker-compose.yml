@@ -10,11 +10,7 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - server
-    volumes:
-      - .:/usr/src/granger/app:
-      - /usr/src/granger/app/node_modules
-
+      - URL_SERVER
   server:
     build:
       context: ./server
@@ -26,8 +22,6 @@ services:
     depends_on:
       - db
     volumes:
-      - .:/usr/src/granger/server:
-      - /usr/src/granger/server/node_modules
 
   db:
     image: mongo
