@@ -10,7 +10,8 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - URL_SERVER
+      - server
+
   server:
     build:
       context: ./server
@@ -21,7 +22,6 @@ services:
       - "4000"
     depends_on:
       - db
-    volumes:
 
   db:
     image: mongo
