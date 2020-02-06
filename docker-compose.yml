@@ -6,7 +6,7 @@ services:
       context: ./app
       dockerfile: Dockerfile
     environment:
-      URL_SERVER: "http://server:4000"
+      URL_SERVER: "server:4000"
     ports:
       - "3000:3000"
     depends_on:
