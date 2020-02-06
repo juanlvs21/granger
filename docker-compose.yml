@@ -1,0 +1,17 @@
+version: "3"
+
+services:
+  granger_app:
+    image: granger_app
+    ports:
+      - "3000:3000"
+
+  granger_server:
+    image: granger_server
+    environment:
+      URL_DB: "mongodb://grangerdb:27017/granger"
+    depends_on:
+      - grangerdb
+
+  grangerdb:
+    image: mongo
