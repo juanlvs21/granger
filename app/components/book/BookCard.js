@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Link from "next/link";
 
 // Font-awesome
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -25,12 +26,14 @@ const BookCard = ({ book }) => {
 
         <div className="granger__product-buy">
           <span>$100</span>
-          <button
-            className="button is-small is-primary is-rounded is-fullwidth"
-            id={`granger__product-btn-${book.id}`}
-          >
-            Ver más
-          </button>
+          <Link href={`/books/${book.uuid}`}>
+            <a
+              className="button is-small is-primary is-rounded is-fullwidth"
+              id={`granger__product-btn-${book.uuid}`}
+            >
+              Ver más
+            </a>
+          </Link>
         </div>
       </div>
     </div>

@@ -186,7 +186,23 @@ export const upload = async (req: Request, res: Response) => {
 
 export const all = async (req: Request, res: Response) => {
   try {
-    const books = await Book.find();
+    let books: any = await Book.find();
+    // Values ​​that should not be sent are discarded
+    books = books.map((book: IBook) => {
+      return {
+        uuid: book.uuid,
+        authors: book.authors,
+        cover: book.cover,
+        folder: book.folder,
+        genre: book.genre,
+        pdf: book.pdf,
+        price: book.price,
+        quantity: book.quantity,
+        title: book.title,
+        stars: book.stars,
+        yearPublication: book.yearPublication
+      };
+    });
     // Response catch error
     msgResponse(
       res,
