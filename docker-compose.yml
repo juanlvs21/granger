@@ -3,6 +3,8 @@ version: "3"
 services:
   app:
     image: granger_app
+    environment:
+      URL_SERVER: "server:4000"
     ports:
       - "3000:3000"
 
