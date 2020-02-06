@@ -25,6 +25,7 @@ export default class API {
   }
 
   async token() {
+    console.log("Env server:", process.env.URL_SERVER);
     return await axios.post(`${this.BASE_URL}/auth/token`, {
       token
     });

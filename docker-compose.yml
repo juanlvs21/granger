@@ -2,16 +2,16 @@ version: "3"
 
 services:
   app:
-    image: granger_app
+    build: ./app
     environment:
-      URL_SERVER: "server:4000"
+      - URL_SERVER: http://server:4000
     ports:
       - "3000:3000"
 
   server:
-    image: granger_server
+    build: ./server
     environment:
-      URL_DB: "mongodb://db:27017/granger"
+      - URL_DB: mongodb://db:27017/granger
     depends_on:
       - db
 
