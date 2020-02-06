@@ -29,7 +29,7 @@ const BookCard = ({ book }) => {
             className="button is-small is-primary is-rounded is-fullwidth"
             id={`granger__product-btn-${book.id}`}
           >
-            Comprar
+            Ver más
           </button>
         </div>
       </div>

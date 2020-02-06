@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import Head from "next/head";
 import Router from "next/router";
 import { connect } from "react-redux";
-import axios from "axios";
 
 // Actions
 import { loginAction } from "../../store/actions/sessionActions";
@@ -11,6 +10,10 @@ import { showMenuMobileAction } from "../../store/actions/appActions";
 // Components
 import Notification from "../../components/core/Notification";
 import Loading from "../../components/core/Loading";
+
+// Service API
+import API from "../../utils/API";
+const service = new API();
 
 const Signup = ({ actions }) => {
   const [error, setError] = useState(null);
@@ -30,7 +33,7 @@ const Signup = ({ actions }) => {
     });
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = e => {
     e.preventDefault();
 
     setLoading(true);
@@ -40,13 +43,8 @@ const Signup = ({ actions }) => {
       setError("La contraseña no coincide");
       setTimeout(() => setError(null), 5000);
     } else {
-      await axios
-        .post("http://localhost:4000/api/auth/signup", {
-          firstName: newUser.firstName,
-          lastName: newUser.lastName,
-          email: newUser.email,
-          password: newUser.password
-        })
+      service
+        .signup(newUser)
         .then(({ data }) => {
           if (data.code == "auth/sign-up-succesfully") {
             actions.login(data.data);

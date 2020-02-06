@@ -15,6 +15,10 @@ import { showMenuMobileAction } from "../../store/actions/appActions";
 import Loading from "../../components/core/Loading";
 import Notification from "../../components/core/Notification";
 
+// Service API
+import API from "../../utils/API";
+const service = new API();
+
 const UploadBook = ({ state }) => {
   const [pdf, setPdf] = useState(null);
   const [cover, setCover] = useState(null);
@@ -89,7 +93,7 @@ const UploadBook = ({ state }) => {
     }
   };
 
-  const onSubmit = async e => {
+  const onSubmit = e => {
     e.preventDefault();
     setLoading(true);
 
@@ -98,12 +102,8 @@ const UploadBook = ({ state }) => {
     formData.append("pdf", pdf);
     formData.append("book", JSON.stringify(book));
 
-    await axios
-      .post("http://localhost:4000/api/books/upload", formData, {
-        headers: {
-          authorization: state.user.token
-        }
-      })
+    service
+      .uploadBook(formData, state.user.token)
       .then(({ data }) => {
         Router.push(`/books/${data.data}`);
       })

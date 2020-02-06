@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import axios from "axios";
 import nookies from "nookies";
 
 // Actions
@@ -10,6 +9,10 @@ import { loginAction } from "../../store/actions/sessionActions";
 // Components
 import Loading from "../../components/core/Loading";
 import Notification from "../../components/core/Notification";
+
+// Service API
+import API from "../../utils/API";
+const service = new API();
 
 const LoginModal = ({ state, actions }) => {
   const [loading, setLoading] = useState(false);
@@ -28,23 +31,23 @@ const LoginModal = ({ state, actions }) => {
     });
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = e => {
     e.preventDefault();
 
     setLoading(true);
 
-    await axios
-      .post("http://localhost:4000/api/auth/signin", {
-        email: user.email,
-        password: user.password
-      })
+    service
+      .login(user.email, user.password)
       .then(({ data }) => {
         nookies.set({}, "token", data.data.token); // Cookie token user
         actions.login(data.data);
+        setUser({
+          email: "",
+          password: ""
+        });
         handleCloseModal();
       })
       .catch(err => {
-        console.log(err);
         if (err.response.data.code == "auth/Wrong-email-or-password") {
           setError(err.response.data.message.es);
           setTimeout(() => setError(null), 5000);

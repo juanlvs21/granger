@@ -1,6 +1,7 @@
 import React from "react";
+import Router from "next/router";
 import { connect } from "react-redux";
-import nookies from "nookies";
+import nookies, { destroyCookie } from "nookies";
 
 // Actions
 import {
@@ -21,6 +22,7 @@ const LogoutConfirmModal = ({ state, actions }) => {
     handleCloseModal();
     nookies.destroy({}, "token");
     actions.logout();
+    Router.replace(Router.route);
   };
 
   return (

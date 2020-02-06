@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Head from "next/head";
-import axios from "axios";
 
 // Actions
 import { showMenuMobileAction } from "../store/actions/appActions";
@@ -9,23 +8,23 @@ import { showMenuMobileAction } from "../store/actions/appActions";
 import Carousel from "../components/home/Carousel";
 import BookCard from "../components/book/BookCard";
 
+// Service API
+import API from "../utils/API";
+const service = new API();
+
 const Home = () => {
   const [books, setBooks] = useState([]);
 
   useEffect(() => {
-    async function getAllBooks() {
-      await axios
-        .get("http://localhost:4000/api/books/all")
+    if (books.length == 0) {
+      service
+        .getAllBooks()
         .then(({ data }) => {
           setBooks(data.data);
         })
         .catch(err => {
           console.log(err);
         });
-    }
-
-    if (books.length == 0) {
-      getAllBooks();
     }
   });
 
