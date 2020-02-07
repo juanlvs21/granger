@@ -30,6 +30,8 @@ export default class API {
 
   //   Books
   async getAllBooks() {
+    console.log("Env:", process.env.URL_SERVER);
+    console.log("Base:", this.BASE_URL);
     return await axios.get(`${this.BASE_URL}/books/all`);
   }
 
