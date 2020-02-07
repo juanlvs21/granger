@@ -2,7 +2,7 @@ import axios from "axios";
 
 export default class API {
   constructor() {
-    this.BASE_URL = "http://167.71.166.176:4000/api";
+    this.BASE_URL = `${process.env.URL_SERVER}/api`;
   }
 
   // Auth
@@ -23,7 +23,6 @@ export default class API {
   }
 
   async token() {
-    console.log("Env server:", process.env.URL_SERVER);
     return await axios.post(`${this.BASE_URL}/auth/token`, {
       token
     });
