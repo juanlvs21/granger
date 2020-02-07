@@ -7,5 +7,8 @@ require("dotenv").config();
 
 module.exports = {
   target: "serverless",
+  env: {
+    URL_SERVER: process.env.URL_SERVER
+  },
   ...withSass(withCSS(withImages(withFonts())))
 };
