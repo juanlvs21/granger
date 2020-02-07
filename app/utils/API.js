@@ -4,7 +4,7 @@ export default class API {
   constructor() {
     this.BASE_URL = process.env.URL_SERVER
       ? `${process.env.URL_SERVER}/api`
-      : "http://localhost:4000/api";
+      : "http://localhost:4005/api";
   }
 
   // Auth
