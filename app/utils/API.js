@@ -2,9 +2,7 @@ import axios from "axios";
 
 export default class API {
   constructor() {
-    this.BASE_URL = process.env.URL_SERVER
-      ? `${process.env.URL_SERVER}/api`
-      : "http://localhost:4000/api";
+    this.BASE_URL = "http://localhost:4000/api";
   }
 
   // Auth

@@ -6,16 +6,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 
 const BookCard = ({ book }) => {
-  const URL_COVER = process.env.URL_SERVER
-    ? `${process.env.URL_SERVER}/uploads/cover/${book.folder}/${book.cover}`
-    : `http://localhost:4000/uploads/cover/${book.folder}/${book.cover}`;
-
   return (
     <div className="granger__product-card">
       <div
         className="granger__product-card-image"
         style={{
-          backgroundImage: `url('${URL_COVER}')`
+          backgroundImage: `url('http://localhost:4000/uploads/cover/${book.folder}/${book.cover}')`
         }}
       >
         <button

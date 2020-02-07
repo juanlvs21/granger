@@ -5,8 +5,6 @@ services:
     build:
       context: ./app
       dockerfile: Dockerfile
-    environment:
-      URL_SERVER: "http://server:4000"
     ports:
       - "3000:3000"
     depends_on:
@@ -19,7 +17,7 @@ services:
     environment:
       URL_DB: "mongodb://db:27017/granger"
     ports:
-      - "4000"
+      - "4000:4000"
     depends_on:
       - db
 
