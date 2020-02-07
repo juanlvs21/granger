@@ -11,7 +11,7 @@ const BookCard = ({ book }) => {
       <div
         className="granger__product-card-image"
         style={{
-          backgroundImage: `url('http://localhost:4000/uploads/cover/${book.folder}/${book.cover}')`
+          backgroundImage: `url('http://167.71.166.176:4000/uploads/cover/${book.folder}/${book.cover}')`
         }}
       >
         <button
