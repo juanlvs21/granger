@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import Router from "next/router";
 import { connect } from "react-redux";
@@ -11,11 +11,13 @@ import { showMenuMobileAction } from "../../store/actions/appActions";
 import Notification from "../../components/core/Notification";
 import Loading from "../../components/core/Loading";
 
-// Service API
+// Utils
+import redirect from "../../utils/redirect";
 import API from "../../utils/API";
 const service = new API();
 
-const Signup = ({ actions }) => {
+const Signup = ({ state, actions }) => {
+  const [readyPage, setreadyPage] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [newUser, setNewUser] = useState({
@@ -58,6 +60,9 @@ const Signup = ({ actions }) => {
             err.response.data.code === "auth/user-exists"
           ) {
             setError(err.response.data.message.es);
+            setTimeout(() => setError(null), 5000);
+          } else if (err.response.data.code === "validator/wrong-fields") {
+            setError(err.response.data.data);
             setTimeout(() => setError(null), 5000);
           } else {
             setError("Error desconocido");
@@ -185,9 +190,13 @@ const Signup = ({ actions }) => {
   );
 };
 
-Signup.getInitialProps = async ({ store }) => {
+Signup.getInitialProps = async ({ store, res }) => {
   store.dispatch(showMenuMobileAction(false));
-  return {};
+  const { session } = store.getState();
+
+  if (session.user) {
+    redirect(res, "/");
+  }
 };
 
 const mapDispatchToProps = dispatch => {

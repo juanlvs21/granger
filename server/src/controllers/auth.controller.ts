@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
+import { validationResult } from "express-validator";
 import uuid from "uuid";
 import jwt from "jsonwebtoken";
-import { validationResult } from "express-validator";
 
 // Models
 import User from "../models/user.model";
@@ -12,27 +12,21 @@ import IPayloadJWT from "../interfaces/IPayloadJWT";
 
 // Libs
 import msgResponse from "../utils/msgResponse";
-import msgResponseValidatorInputs from "../utils/msgResponseValidatorInputs";
+import msgResponseValidatorInputs from "../utils/validate/user/responseValidateUser";
+
+// sendEmail
+import sendEmail from "../utils/email/sendEmail";
+import welcomeTemplate from "../utils/email/templates/welcome";
 
 export const signup = async (req: Request, res: Response) => {
   try {
     const { email, password, firstName, lastName } = req.body;
 
-    // Now, it is verified that the fields are not empty
-    if (
-      email.trim() == "" ||
-      password.trim() == "" ||
-      firstName.trim() == "" ||
-      lastName.trim() == ""
-    )
-      return msgResponse(
-        res,
-        400,
-        "auth/fields-cannot-be-empty",
-        "The fields cannot be empty",
-        "Los campos no pueden estar vacíos",
-        null
-      );
+    // The data is validated if they are correct
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      if (errors.array) return msgResponseValidatorInputs(res, errors.array());
+    }
 
     // Search user by email
     const userExists = await User.findOne({ email });
@@ -80,6 +74,16 @@ export const signup = async (req: Request, res: Response) => {
       token
     };
 
+    // Send registration email
+
+    await sendEmail(
+      savedUser.email,
+      "Registro exitoso✔",
+      welcomeTemplate(savedUser.firstName)
+    ).catch(err => {
+      console.log("Error: ", err);
+    });
+
     // Response
     msgResponse(
       res,
@@ -107,6 +111,7 @@ export const signin = async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
     const errors = validationResult(req);
+
     if (!errors.isEmpty()) {
       if (errors.array) return msgResponseValidatorInputs(res, errors.array());
     }
@@ -195,6 +200,7 @@ export const token = async (req: Request, res: Response) => {
       { _id: user._id },
       process.env.SECRET || "test-token"
     );
+
     // Creating response User
     const responseUser = {
       uuid: user.uuid,

@@ -1,11 +1,14 @@
 import { Request, Response } from "express";
+import slugify from "slugify";
 import uuid from "uuid";
 
 // Models
 import Book from "../models/book.model";
+import Genre from "../models/genre.mode";
 
 // Interface
 import IBook from "../interfaces/IBook";
+import IGenre from "../interfaces/IGenre";
 
 // Libs
 import msgResponse from "../utils/msgResponse";
@@ -91,28 +94,24 @@ export const upload = async (req: Request, res: Response) => {
     // It is verified that the price, quantity and year are numbers
     if (
       isNaN(BookJSONReceived.price) ||
-      isNaN(BookJSONReceived.quantity) ||
       isNaN(BookJSONReceived.yearPublication)
     )
       return msgResponse(
         res,
         400,
-        "books/price-quantity-year-must-be-numbers",
-        "The price, quantity and year must be numbers",
-        "El precio, la cantidad y el año deben ser números",
+        "books/price-year-must-be-numbers",
+        "The price and year must be numbers",
+        "El precio y el año deben ser números",
         null
       );
 
     // It is verified that the price and quantity are greater than zero
-    if (
-      parseFloat(BookJSONReceived.price) <= 0 ||
-      parseFloat(BookJSONReceived.quantity) <= 0
-    )
+    if (parseFloat(BookJSONReceived.price) <= 0)
       return msgResponse(
         res,
         400,
-        "books/price-quantity-greater-than-zero",
-        "The price and quantity must be greater than zero",
+        "books/price-greater-than-zero",
+        "The price must be greater than zero",
         "Nombre se encuentra vacío",
         null
       );
@@ -134,23 +133,16 @@ export const upload = async (req: Request, res: Response) => {
 
     // After validating the data, if all is well, the strings are converted to numbers
     BookJSONReceived.price = parseFloat(BookJSONReceived.price);
-    BookJSONReceived.quantity = parseFloat(BookJSONReceived.quantity);
     BookJSONReceived.yearPublication = parseFloat(
       BookJSONReceived.yearPublication
     );
-
-    // Creating folder name
-    const folder: string = BookJSONReceived.title
-      .toLowerCase()
-      .split(" ")
-      .join("-");
 
     // Creating new book
     const datetime = new Date().getTime();
     const book: IBook = new Book({
       ...BookJSONReceived,
       uuid: uuid.v1(),
-      folder: `${folder}-${datetime}`,
+      slug: slugify(BookJSONReceived.title),
       cover: cover.name,
       pdf: pdf.name
     });
@@ -159,8 +151,8 @@ export const upload = async (req: Request, res: Response) => {
     const savedBook: IBook = await book.save();
 
     // Saving files on the server
-    cover.mv(`./dist/uploads/cover/${book.folder}/${cover.name}`);
-    pdf.mv(`./dist/uploads/pdf/${book.folder}/${pdf.name}`);
+    cover.mv(`./dist/uploads/cover/${book.slug}/${cover.name}`);
+    pdf.mv(`./dist/uploads/pdf/${book.slug}/${pdf.name}`);
 
     // Response
     msgResponse(
@@ -193,17 +185,17 @@ export const all = async (req: Request, res: Response) => {
         uuid: book.uuid,
         authors: book.authors,
         cover: book.cover,
-        folder: book.folder,
         genre: book.genre,
         pdf: book.pdf,
         price: book.price,
-        quantity: book.quantity,
         title: book.title,
+        slug: book.slug,
         stars: book.stars,
         yearPublication: book.yearPublication
       };
     });
-    // Response catch error
+
+    // Response
     msgResponse(
       res,
       200,
@@ -213,7 +205,6 @@ export const all = async (req: Request, res: Response) => {
       books
     );
   } catch (err) {
-    console.log(err);
     // Response catch error
     msgResponse(
       res,
@@ -221,6 +212,67 @@ export const all = async (req: Request, res: Response) => {
       "books/error-loading",
       "Error loading books",
       "Error al cargar los libros",
+      null
+    );
+  }
+};
+
+export const allGenre = async (req: Request, res: Response) => {
+  try {
+    const genres: IGenre[] = await Genre.find();
+
+    // Response catch error
+    msgResponse(
+      res,
+      200,
+      "genre/get-all",
+      "Get all the genres",
+      "Obtener todos los generos",
+      genres
+    );
+  } catch (err) {
+    // Response catch error
+    msgResponse(
+      res,
+      500,
+      "genre/not-loaded",
+      "Genres not loaded",
+      "Géneros no cargados",
+      null
+    );
+  }
+};
+
+export const addGenre = async (req: Request, res: Response) => {
+  try {
+    const { genre } = req.body;
+
+    // Creating new genre
+    const newGenre: IGenre = new Genre({
+      genre
+    });
+
+    // Saving genre created
+    await newGenre.save();
+
+    // Response
+    msgResponse(
+      res,
+      201,
+      "genre/successfully-added",
+      "Genre successfully added",
+      "Género agregado exitosamente",
+      null
+    );
+  } catch (err) {
+    // Response catch error
+    console.log(err);
+    msgResponse(
+      res,
+      500,
+      "genre/no-added",
+      "Genre no added",
+      "Género no agregado",
       null
     );
   }

@@ -1,13 +1,12 @@
 import { Response } from "express";
 
 // Libs
-import msgResponse from "./msgResponse";
+import msgResponse from "../../msgResponse";
 
-const msgResponseValidatorInputs = (res: Response, errors: any = null) => {
+const responseValidateUser = (res: Response, errors: any = null) => {
   let listError: any = [];
 
   errors.map((err: any) => {
-    console.log(err.param, err.msg);
     if (err.param === "email") {
       listError.push({
         en: "Enter a valid email",
@@ -17,6 +16,16 @@ const msgResponseValidatorInputs = (res: Response, errors: any = null) => {
       listError.push({
         en: "Enter a valid password (Greater than 6 characters)",
         es: "Ingrese una contraseña válida (más de 6 caracteres)"
+      });
+    } else if (err.param === "firstName") {
+      listError.push({
+        en: "Enter a valid first name",
+        es: "Ingrese un nombre válido"
+      });
+    } else if (err.param === "lastName") {
+      listError.push({
+        en: "Enter a valid last name",
+        es: "Ingrese un apellido válido"
       });
     }
   });
@@ -31,4 +40,4 @@ const msgResponseValidatorInputs = (res: Response, errors: any = null) => {
   );
 };
 
-export default msgResponseValidatorInputs;
+export default responseValidateUser;

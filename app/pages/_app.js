@@ -19,7 +19,7 @@ import makeStore from "../store/store";
 // Actions
 import { loginAction } from "../store/actions/sessionActions";
 
-// Service API
+// Utils
 import API from "../utils/API";
 
 // Router Progress bar
@@ -41,7 +41,7 @@ class MyApp extends App {
     const service = new API();
 
     if (token) {
-      service
+      await service
         .token(token)
         .then(({ data }) => {
           nookies.set({}, "token", data.data.token); // Cookie token user

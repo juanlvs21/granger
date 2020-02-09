@@ -8,11 +8,12 @@ import IBook from "../interfaces/IBook";
 const bookSchema = new Schema({
   uuid: { type: String, unique: true, required: true },
   title: { type: String, required: true },
+  slug: { type: String, required: true },
+  description: { type: String, required: false },
   authors: { type: String },
   yearPublication: { type: Number },
   genre: { type: [String] },
   price: { type: Number, required: true },
-  quantity: { type: Number, required: true },
   stars: { type: Number, required: false, default: 0 },
   uploadedBy: { type: {}, required: true },
   created_date: {
@@ -20,7 +21,6 @@ const bookSchema = new Schema({
     required: true,
     default: moment().toISOString()
   },
-  folder: { type: String, required: true },
   cover: { type: String, required: true },
   pdf: { type: String, required: true }
 });

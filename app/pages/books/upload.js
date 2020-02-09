@@ -14,8 +14,10 @@ import { showMenuMobileAction } from "../../store/actions/appActions";
 // Components
 import Loading from "../../components/core/Loading";
 import Notification from "../../components/core/Notification";
+import GenresModal from "../../components/book/GenresModal";
 
-// Service API
+// Utils
+import redirect from "../../utils/redirect";
 import API from "../../utils/API";
 const service = new API();
 
@@ -26,17 +28,19 @@ const UploadBook = ({ state }) => {
     title: "",
     authors: "",
     editorial: "",
+    description: "",
     yearPublication: "",
     genre: [],
     price: 0,
-    quantity: 0,
     uploadedBy: {
-      uuid: state.user.uuid,
-      firstName: state.user.firstName,
-      lastName: state.user.lastName,
-      email: state.user.email
+      uuid: state.user ? state.user.uuid : null,
+      firstName: state.user ? state.user.firstName : null,
+      lastName: state.user ? state.user.lastName : null,
+      email: state.user ? state.user.email : null
     }
   });
+
+  const [showModalGenres, setShowModalGenres] = useState(false);
 
   const [preview, setPreview] = useState(null);
 
@@ -97,10 +101,15 @@ const UploadBook = ({ state }) => {
     e.preventDefault();
     setLoading(true);
 
+    const bookForSend = {
+      ...book,
+      genre: state.genresSelected
+    };
+
     const formData = new FormData();
     formData.append("cover", cover);
     formData.append("pdf", pdf);
-    formData.append("book", JSON.stringify(book));
+    formData.append("book", JSON.stringify(bookForSend));
 
     service
       .uploadBook(formData, state.user.token)
@@ -116,9 +125,8 @@ const UploadBook = ({ state }) => {
           err.response.data.code === "books/book-must-be-pdf" ||
           err.response.data.code === "books/pdf-is-required" ||
           err.response.data.code === "books/name-is-empty" ||
-          err.response.data.code === "books/price-quantity-greater-than-zero" ||
-          err.response.data.code ===
-            "books/price-quantity-year-must-be-numbers" ||
+          err.response.data.code === "books/price-greater-than-zero" ||
+          err.response.data.code === "books/price-year-must-be-numbers" ||
           err.response.data.code === "books/year-publication-less-current-year"
         ) {
           setError(err.response.data.message.es);
@@ -133,6 +141,16 @@ const UploadBook = ({ state }) => {
 
   const closeNotification = () => {
     setError(null);
+  };
+
+  const handleCloseModalGenres = () => {
+    setShowModalGenres(false);
+  };
+
+  const handleAddGenre = genre => {
+    console.log(genre);
+    // const newGenresSelected = genresSelected.concat([].push(genre));
+    // setGenresSelected(newGenresSelected);
   };
 
   return (
@@ -165,12 +183,16 @@ const UploadBook = ({ state }) => {
           <div className="columns is-multiline">
             <div className="column">
               <div className="field">
+                <label htmlFor="title" className="label">
+                  Titulo
+                </label>
                 <div className="control">
                   <input
                     className="input is-info is-rounded"
                     type="text"
                     placeholder="Titulo"
                     name="title"
+                    id="title"
                     value={book.title}
                     onChange={onChange}
                     required
@@ -178,25 +200,17 @@ const UploadBook = ({ state }) => {
                 </div>
               </div>
               <div className="field">
+                <label htmlFor="authors" className="label">
+                  Autor/Autores
+                </label>
                 <div className="control">
                   <input
                     className="input is-info is-rounded"
                     type="text"
                     placeholder="Autor/Autores"
                     name="authors"
+                    id="authors"
                     value={book.authors}
-                    onChange={onChange}
-                  />
-                </div>
-              </div>
-              <div className="field">
-                <div className="control">
-                  <input
-                    className="input is-info is-rounded"
-                    type="text"
-                    placeholder="Editorial"
-                    name="editorial"
-                    value={book.editorial}
                     onChange={onChange}
                   />
                 </div>
@@ -204,12 +218,16 @@ const UploadBook = ({ state }) => {
             </div>
             <div className="column">
               <div className="field">
+                <label htmlFor="price" className="label">
+                  Precio ($)
+                </label>
                 <div className="control">
                   <input
                     className="input is-info is-rounded"
                     type="number"
                     placeholder="Precio"
                     name="price"
+                    id="price"
                     value={book.price}
                     onChange={onChange}
                     required
@@ -217,28 +235,63 @@ const UploadBook = ({ state }) => {
                 </div>
               </div>
               <div className="field">
-                <div className="control">
-                  <input
-                    className="input is-info is-rounded"
-                    type="number"
-                    placeholder="Cantidad"
-                    name="quantity"
-                    value={book.quantity}
-                    onChange={onChange}
-                    required
-                  />
-                </div>
-              </div>
-              <div className="field">
+                <label htmlFor="yearPublication" className="label">
+                  Año de publicación
+                </label>
                 <div className="control">
                   <input
                     className="input is-info is-rounded"
                     type="number"
                     placeholder="Año de publicación"
                     name="yearPublication"
+                    id="yearPublication"
                     value={book.yearPublication}
                     onChange={onChange}
                   />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="columns">
+            <div className="column">
+              <div className="field">
+                <label htmlFor="description" className="label">
+                  Titulo
+                </label>
+                <div className="control">
+                  <textarea
+                    className="textarea is-info is-rounded"
+                    placeholder="Descripción"
+                    name="description"
+                    id="description"
+                    value={book.description}
+                    onChange={onChange}
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="columns is-multiline">
+            <div className="column">
+              <div className="control granger__genre-container">
+                <button
+                  className="button is-primary is-small is-rounded"
+                  type="button"
+                  onClick={() => setShowModalGenres(true)}
+                >
+                  <b>Agregar Género</b>
+                </button>
+
+                <div className="granger__genre-tag">
+                  {state.genresSelected && (
+                    <>
+                      {state.genresSelected.map((genreSelected, i) => (
+                        <span className="tag is-primary" key={i}>
+                          {genreSelected}
+                        </span>
+                      ))}
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -301,6 +354,13 @@ const UploadBook = ({ state }) => {
           )}
         </form>
       </div>
+
+      <GenresModal
+        show={showModalGenres}
+        handleClose={handleCloseModalGenres}
+        token={state.user.token}
+      />
+
       <style jsx>{`
         .container,
         form {
@@ -309,6 +369,19 @@ const UploadBook = ({ state }) => {
 
         .column {
           padding: 10px 20px;
+        }
+
+        .granger__genre-container {
+          display: flex;
+          align-items: center;
+        }
+
+        .granger__genre-container .granger__genre-tag {
+          margin-left: 10px;
+        }
+
+        .granger__genre-container .granger__genre-tag span {
+          margin: 5px;
         }
 
         .granger__field-file {
@@ -355,17 +428,42 @@ const UploadBook = ({ state }) => {
   );
 };
 
-UploadBook.getInitialProps = async ({ store }) => {
+UploadBook.getInitialProps = async ({ store, res }) => {
   store.dispatch(showMenuMobileAction(false));
+  const { session } = store.getState();
+
+  if (session.user) {
+    if (!session.user.admin) {
+      redirect(res, "/");
+    }
+  } else {
+    redirect(res, "/");
+  }
+
   return {};
 };
 
 const mapStateToProps = reducers => {
   return {
     state: {
-      user: reducers.session.user
+      user: reducers.session.user,
+      genresSelected: reducers.book.genresSelected
     }
   };
 };
 
-export default connect(mapStateToProps)(UploadBook);
+const mapDispatchToProps = dispatch => {
+  return {
+    actions: {
+      addGenresSelected: genresSelected =>
+        dispatch(addGenresSelectedAction(genresSelected))
+    }
+  };
+};
+
+UploadBook.getInitialProps = async ({ store }) => {
+  store.dispatch(showMenuMobileAction(false));
+  return {};
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(UploadBook);

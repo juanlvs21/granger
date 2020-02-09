@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Router from "next/router";
 import { connect } from "react-redux";
 import nookies from "nookies";
 
@@ -10,7 +11,7 @@ import { loginAction } from "../../store/actions/sessionActions";
 import Loading from "../../components/core/Loading";
 import Notification from "../../components/core/Notification";
 
-// Service API
+// Utils
 import API from "../../utils/API";
 const service = new API();
 
@@ -45,12 +46,19 @@ const LoginModal = ({ state, actions }) => {
           email: "",
           password: ""
         });
+
+        if (Router.route === "/auth/signup") {
+          Router.replace("/");
+        }
+
         handleCloseModal();
       })
       .catch(err => {
         if (err.response.data.code == "auth/Wrong-email-or-password") {
           setError(err.response.data.message.es);
           setTimeout(() => setError(null), 5000);
+        } else if (err.response.data.code === "validator/wrong-fields") {
+          setError(err.response.data.data);
         } else {
           setError("Error desconocido");
           setTimeout(() => setError(null), 5000);

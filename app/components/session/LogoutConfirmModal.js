@@ -22,7 +22,11 @@ const LogoutConfirmModal = ({ state, actions }) => {
     handleCloseModal();
     nookies.destroy({}, "token");
     actions.logout();
-    Router.replace(Router.route);
+    if (Router.route === "/books/upload") {
+      Router.replace("/");
+    } else {
+      Router.replace(Router.route);
+    }
   };
 
   return (

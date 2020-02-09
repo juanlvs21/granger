@@ -4,7 +4,15 @@ const Alert = ({ type, message, close }) => {
   return (
     <div className={`notification ${type}`}>
       <button className="delete" onClick={close}></button>
-      {message}
+      {Array.isArray(message) ? (
+        <ul>
+          {message.map((msg, i) => (
+            <li key={i}>- {msg.es}</li>
+          ))}
+        </ul>
+      ) : (
+        { message }
+      )}
     </div>
   );
 };

@@ -22,7 +22,7 @@ export default class API {
     });
   }
 
-  async token() {
+  async token(token) {
     return await axios.post(`${this.BASE_URL}/auth/token`, {
       token
     });
@@ -30,8 +30,6 @@ export default class API {
 
   //   Books
   async getAllBooks() {
-    console.log("Env:", process.env.URL_SERVER);
-    console.log("Base:", this.BASE_URL);
     return await axios.get(`${this.BASE_URL}/books/all`);
   }
 
@@ -41,5 +39,22 @@ export default class API {
         authorization: token
       }
     });
+  }
+
+  // Books - Genres
+  async addGenre(genre, token) {
+    return await axios.post(
+      `${this.BASE_URL}/books/genre`,
+      { genre },
+      {
+        headers: {
+          authorization: token
+        }
+      }
+    );
+  }
+
+  async getAllGenres() {
+    return await axios.get(`${this.BASE_URL}/books/genre`);
   }
 }
