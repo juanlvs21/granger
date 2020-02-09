@@ -6,9 +6,9 @@ import "slick-carousel/slick/slick.scss";
 import "slick-carousel/slick/slick-theme.scss";
 
 // Components
-import Hero from "./Hero";
+import SliderTiem from "./SliderItem";
 
-const Carousel = () => {
+const SliderHome = () => {
   const settings = {
     dots: true,
     infinite: true,
@@ -19,23 +19,23 @@ const Carousel = () => {
 
   return (
     <Slider {...settings}>
-      <Hero
+      <SliderTiem
         title="Tienda de libros"
         subtitle="Todo lo que estabas buscando"
-        color="is-info"
+        img="slider1.webp"
       />
-      <Hero
+      <SliderTiem
         title="Siempre pensando en ti"
         subtitle="Los mejores precios del mercado"
-        color="is-danger"
+        img="slider2.webp"
       />
-      <Hero
+      <SliderTiem
         title="Titulo de relleno"
         subtitle="Texto de relleno porque no tengo que poner"
-        color="is-primary"
+        img="slider3.webp"
       />
     </Slider>
   );
 };
 
-export default Carousel;
+export default SliderHome;

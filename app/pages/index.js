@@ -5,7 +5,7 @@ import Head from "next/head";
 import { showMenuMobileAction } from "../store/actions/appActions";
 
 // Components
-import Carousel from "../components/home/Carousel";
+import Slider from "../components/home/Slider";
 import CarouselFeaturedBooks from "../components/book/CarouselFeaturedBooks";
 import BookCard from "../components/book/BookCard";
 
@@ -22,7 +22,7 @@ const Home = ({ books }) => {
       <Head>
         <title>Inicio | Granger </title>
       </Head>
-      <Carousel />
+      <Slider />
       <section className="section container is-fluid">
         <h1 className="is-size-2 has-text-centered has-text-weight-semibold">
           Libros Destacados
