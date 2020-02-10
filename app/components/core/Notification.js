@@ -11,7 +11,7 @@ const Alert = ({ type, message, close }) => {
           ))}
         </ul>
       ) : (
-        { message }
+        <span>{message}</span>
       )}
     </div>
   );

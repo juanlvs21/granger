@@ -4,6 +4,7 @@ const welcomeTemplate = (name: string) => {
   return `
   <div>
     <header style="background-color: #cf56a1;padding: 4px 0;text-align: center;color: #fff;">
+      <img src="http://167.71.166.176:4000/static/granger-logo.webp" alt="Granger" />
       <h1>Bienvenido a Granger 📖</h1>
     </header>
     <div class="granger__mail-content" style="padding: 5% 10%;">

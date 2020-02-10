@@ -6,6 +6,7 @@ import withRedux from "next-redux-wrapper";
 import { Provider } from "react-redux";
 import { PageTransition } from "next-page-transitions";
 import nookies from "nookies";
+import Head from "next/head";
 
 // Styles
 import "../assets/styles/styles.scss";
@@ -59,22 +60,13 @@ class MyApp extends App {
     };
   }
 
-  //   componentDidMount() {
-  //     if (typeof window !== "undefined") {
-  //       // jQuery
-  //       require("jquery");
-  //       // Bootstrap
-  //       require("bootstrap/dist/css/bootstrap.min.css");
-  //       require("bootstrap/dist/js/bootstrap.bundle");
-  //       // React table
-  //       require("react-table/react-table.css");
-  //     }
-  //   }
-
   render() {
     const { Component, pageProps, router, store } = this.props;
     return (
       <Provider store={store}>
+        <Head>
+          <link rel="shortcut icon" href="/favicon.ico" />
+        </Head>
         <Layout>
           <PageTransition timeout={300} classNames="fade-in">
             <Component {...pageProps} key={router.route} />

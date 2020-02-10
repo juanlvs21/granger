@@ -54,11 +54,12 @@ const LoginModal = ({ state, actions }) => {
         handleCloseModal();
       })
       .catch(err => {
-        if (err.response.data.code == "auth/Wrong-email-or-password") {
+        if (err.response.data.code === "auth/Wrong-email-or-password") {
           setError(err.response.data.message.es);
           setTimeout(() => setError(null), 5000);
         } else if (err.response.data.code === "validator/wrong-fields") {
           setError(err.response.data.data);
+          setTimeout(() => setError(null), 5000);
         } else {
           setError("Error desconocido");
           setTimeout(() => setError(null), 5000);

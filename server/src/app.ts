@@ -35,4 +35,6 @@ app.use(
   express.static(path.join(__dirname, "uploads/cover"))
 );
 
+app.use("/static", express.static(path.join(__dirname, "static")));
+
 export default app;
