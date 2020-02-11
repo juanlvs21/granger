@@ -358,7 +358,7 @@ const UploadBook = ({ state }) => {
       <GenresModal
         show={showModalGenres}
         handleClose={handleCloseModalGenres}
-        token={state.user.token}
+        token={state.user ? state.user.token : null}
       />
 
       <style jsx>{`
