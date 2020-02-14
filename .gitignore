@@ -1,6 +1,14 @@
 app/node_modules
-app/.next
+app/.nuxt
 app/.env
+app/dist
+# Logs
+app/logs
+app/*.log
+app/npm-debug.log*
+app/yarn-debug.log*
+app/yarn-error.log*
+
 server/node_modules
 server/dist
 server/.env

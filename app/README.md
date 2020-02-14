@@ -1,8 +1,7 @@
 # Granger frontend
 
-- React.js
-- Next.js
-- Redux
+- Vue.js
+- Nuxt.js
 
 ## Run the project
 

@@ -2,6 +2,7 @@
 .dockerignore
 Dockerfile
 node_modules
-.next
+.nuxt
+dist
 npm-debug.log*
 README.md
