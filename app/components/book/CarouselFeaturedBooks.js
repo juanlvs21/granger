@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from "react";
-
-// Font-awesome
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
-import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { MdKeyboardArrowLeft } from "react-icons/md";
+import { MdKeyboardArrowRight } from "react-icons/md";
 
 // React-carousel
 import Carousel from "@brainhubeu/react-carousel";
@@ -50,16 +47,14 @@ const CarouselFeaturedBooks = ({ featuredBooks }) => {
         keepDirectionWhenDragging
         arrows
         arrowLeft={
-          <FontAwesomeIcon
-            icon={faArrowLeft}
-            size="lg"
+          <MdKeyboardArrowLeft
+            size="36px"
             style={{ color: "#3f4d71", marginRight: "10px", cursor: "pointer" }}
           />
         }
         arrowRight={
-          <FontAwesomeIcon
-            icon={faArrowRight}
-            size="lg"
+          <MdKeyboardArrowRight
+            size="36px"
             style={{ color: "#3f4d71", marginLeft: "10px", cursor: "pointer" }}
           />
         }

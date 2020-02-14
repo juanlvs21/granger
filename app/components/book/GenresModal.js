@@ -166,7 +166,7 @@ const GenresModal = ({ show, handleClose, token, state, actions }) => {
             }}
           >
             <button type="button" className="button" onClick={handleClose}>
-              Cancelar
+              Listo
             </button>
           </footer>
         </div>

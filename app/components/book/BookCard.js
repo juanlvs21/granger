@@ -1,9 +1,6 @@
 import React from "react";
 import Link from "next/link";
-
-// Font-awesome
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHeart } from "@fortawesome/free-solid-svg-icons";
+import { MdFavoriteBorder } from "react-icons/md";
 
 const BookCard = ({ book }) => {
   return (
@@ -20,7 +17,7 @@ const BookCard = ({ book }) => {
             className="granger__book-card-details-btn-fav"
             data-title="Añadir a Favoritos"
           >
-            <FontAwesomeIcon icon={faHeart} size="lg" />
+            <MdFavoriteBorder />
           </button>
 
           <p className="granger__book-card-details-title">{book.title}</p>

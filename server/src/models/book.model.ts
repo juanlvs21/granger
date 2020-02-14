@@ -13,6 +13,7 @@ const bookSchema = new Schema({
   authors: { type: String },
   yearPublication: { type: Number },
   genre: { type: [String] },
+  available: { type: Boolean, required: true, default: true },
   price: { type: Number, required: true },
   stars: { type: Number, required: false, default: 0 },
   uploadedBy: { type: {}, required: true },

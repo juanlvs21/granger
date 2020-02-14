@@ -1,15 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import Router from "next/router";
 import axios from "axios";
 import { connect } from "react-redux";
-
-// Font-awesome
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUpload } from "@fortawesome/free-solid-svg-icons";
+import { MdFileUpload } from "react-icons/md";
 
 // Actions
 import { showMenuMobileAction } from "../../store/actions/appActions";
+import { addGenresSelectedAction } from "../../store/actions/bookActions";
 
 // Components
 import Loading from "../../components/core/Loading";
@@ -21,9 +19,13 @@ import redirect from "../../utils/redirect";
 import API from "../../utils/API";
 const service = new API();
 
-const UploadBook = ({ state }) => {
+const UploadBook = ({ state, actions }) => {
   const [pdf, setPdf] = useState(null);
   const [cover, setCover] = useState(null);
+  const [showModalGenres, setShowModalGenres] = useState(false);
+  const [preview, setPreview] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [book, setBook] = useState({
     title: "",
     authors: "",
@@ -40,12 +42,9 @@ const UploadBook = ({ state }) => {
     }
   });
 
-  const [showModalGenres, setShowModalGenres] = useState(false);
-
-  const [preview, setPreview] = useState(null);
-
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  useEffect(() => {
+    actions.clearGenres();
+  }, []);
 
   const onChangeFile = e => {
     if (e.target.name === "cover") {
@@ -145,12 +144,6 @@ const UploadBook = ({ state }) => {
 
   const handleCloseModalGenres = () => {
     setShowModalGenres(false);
-  };
-
-  const handleAddGenre = genre => {
-    console.log(genre);
-    // const newGenresSelected = genresSelected.concat([].push(genre));
-    // setGenresSelected(newGenresSelected);
   };
 
   return (
@@ -310,7 +303,7 @@ const UploadBook = ({ state }) => {
                     />
                     <span className="file-cta">
                       <span className="file-icon">
-                        <FontAwesomeIcon icon={faUpload} />
+                        <MdFileUpload />
                       </span>
                       <span className="file-label">Libro (PDF)</span>
                     </span>
@@ -334,7 +327,7 @@ const UploadBook = ({ state }) => {
                     />
                     <span className="file-cta">
                       <span className="file-icon">
-                        <FontAwesomeIcon icon={faUpload} />
+                        <MdFileUpload />
                       </span>
                       <span className="file-label">Portada</span>
                     </span>
@@ -455,8 +448,7 @@ const mapStateToProps = reducers => {
 const mapDispatchToProps = dispatch => {
   return {
     actions: {
-      addGenresSelected: genresSelected =>
-        dispatch(addGenresSelectedAction(genresSelected))
+      clearGenres: () => dispatch(addGenresSelectedAction([]))
     }
   };
 };

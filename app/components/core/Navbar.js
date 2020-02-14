@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { connect } from "react-redux";
+import { MdFavorite } from "react-icons/md";
 
 // Actions
 import {
@@ -89,6 +90,13 @@ const Navbar = ({ state, actions }) => {
                     </a>
                   </Link>
                 )}
+                <div className="navbar-item">
+                  <Link href="/books/upload">
+                    <a className="button is-primary is-small">
+                      <MdFavorite size="20px" />
+                    </a>
+                  </Link>
+                </div>
                 <div
                   className={`navbar-item has-dropdown ${
                     state.showDropdownProfile ? "is-active" : ""
