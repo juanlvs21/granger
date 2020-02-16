@@ -1,5 +1,5 @@
 <template>
-  <div class="granger__book-card">
+  <div class="granger__book-card animated fadeIn">
     <img
       class="granger__book-card-img"
       :src="`${server}/uploads/cover/${book.slug}/${book.cover}`"
