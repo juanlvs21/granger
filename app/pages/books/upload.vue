@@ -1,20 +1,11 @@
 <template>
   <div class="granger__books-genres-tagss-upload-container">
     <div class="container">
-      <h1 class="is-size-2 has-text-centered has-text-weight-semibold">
-        Nuevo libro
-      </h1>
+      <h1 class="is-size-2 has-text-centered has-text-weight-semibold">Nuevo libro</h1>
       <form @submit.prevent="handleSubmit">
         <div class="columns">
           <div class="column has-text-right">
-            <b-button
-              type="is-info"
-              :loading="isLoading"
-              native-type="submit"
-              rounded
-            >
-              Subir
-            </b-button>
+            <b-button type="is-info" :loading="isLoading" native-type="submit" rounded>Subir</b-button>
           </div>
         </div>
 
@@ -26,47 +17,30 @@
               <b-input placeholder="Titulo" v-model="newBook.title"></b-input>
             </b-field>
             <b-field label="Autor/Autores">
-              <b-input
-                placeholder="Autor/Autores"
-                v-model="newBook.authors"
-              ></b-input>
+              <b-input placeholder="Autor/Autores" v-model="newBook.authors"></b-input>
             </b-field>
           </div>
           <div class="column">
             <b-field label="Precio ($)">
-              <b-numberinput
-                placeholder="Precio ($)"
-                v-model="newBook.price"
-              ></b-numberinput>
+              <b-numberinput placeholder="Precio ($)" v-model="newBook.price"></b-numberinput>
             </b-field>
             <b-field label="Año de publicación">
-              <b-input
-                placeholder="Año de publicación"
-                v-model="newBook.yearPublication"
-              ></b-input>
+              <b-input placeholder="Año de publicación" v-model="newBook.yearPublication"></b-input>
             </b-field>
           </div>
         </div>
         <div class="columns">
           <div class="column">
             <b-field label="Descripción">
-              <b-input placeholder="Descripción" type="textarea"></b-input>
+              <b-input placeholder="Descripción" type="textarea" v-model="newBook.description"></b-input>
             </b-field>
           </div>
         </div>
         <div class="columns is-multiline">
           <div class="column granger__books-genres-tags">
-            <b-button type="is-primary" @click="showModalGenres = true"
-              >Género/Géneros</b-button
-            >
+            <b-button type="is-primary" @click="showModalGenres = true">Género/Géneros</b-button>
             <div class="tags">
-              <span
-                class="tag is-info"
-                v-for="(genre, i) in newBook.genre"
-                :key="i"
-              >
-                {{ genre }}
-              </span>
+              <span class="tag is-info" v-for="(genre, i) in newBook.genre" :key="i">{{ genre }}</span>
             </div>
           </div>
         </div>
@@ -79,9 +53,7 @@
                   <span>Libro (PDF)</span>
                 </a>
               </b-upload>
-              <span class="file-name" v-if="files.pdf">
-                {{ files.pdf.name }}
-              </span>
+              <span class="file-name" v-if="files.pdf">{{ files.pdf.name }}</span>
             </b-field>
           </div>
           <div class="column">
@@ -92,9 +64,7 @@
                   <span>Portada</span>
                 </a>
               </b-upload>
-              <span class="file-name" v-if="files.cover">
-                {{ files.cover.name }}
-              </span>
+              <span class="file-name" v-if="files.cover">{{ files.cover.name }}</span>
             </b-field>
           </div>
         </div>
@@ -102,15 +72,10 @@
     </div>
 
     <!-- Modal Genres -->
-    <b-modal
-      :active.sync="showModalGenres"
-      has-modal-card
-      trap-focus
-      aria-role="dialog"
-      aria-modal
-    >
+    <b-modal :active.sync="showModalGenres" has-modal-card trap-focus aria-role="dialog" aria-modal>
       <Genres :genres="newBook.genre" />
     </b-modal>
+    <b-loading :is-full-page="false" :active.sync="isLoading"></b-loading>
   </div>
 </template>
 
@@ -142,10 +107,10 @@ export default {
         genre: [],
         price: 0,
         uploadedBy: {
-          uuid: null,
-          firstName: null,
-          lastName: null,
-          email: null
+          uuid: this.$store.state.user.uuid,
+          firstName: this.$store.state.user.firstName,
+          lastName: this.$store.state.user.lastName,
+          email: this.$store.state.user.email
         }
       },
       files: {
@@ -177,7 +142,11 @@ export default {
           }
         })
         .then(({ data }) => {
-          this.$router.push(`/books/${data.data}`)
+          this.$buefy.toast.open({
+            message: 'Libro registrado satisfactoriamente',
+            position: 'is-bottom-right'
+          })
+          this.$router.push(`/books/${data}`)
         })
         .catch(err => {
           if (

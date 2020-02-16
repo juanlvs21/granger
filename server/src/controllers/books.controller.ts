@@ -85,9 +85,9 @@ export const upload = async (req: Request, res: Response) => {
       return msgResponse(
         res,
         400,
-        "books/name-is-empty",
-        "Name is empty",
-        "Nombre se encuentra vacío",
+        "books/title-is-empty",
+        "Title is empty",
+        "Titulo se encuentra vacío",
         null
       );
 
@@ -112,7 +112,7 @@ export const upload = async (req: Request, res: Response) => {
         400,
         "books/price-greater-than-zero",
         "The price must be greater than zero",
-        "Nombre se encuentra vacío",
+        "El precio debe ser mayor que cero",
         null
       );
 
