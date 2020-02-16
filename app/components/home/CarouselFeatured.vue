@@ -48,5 +48,6 @@ export default {
 .VueCarousel-slide {
   display: flex;
   justify-content: center;
+  padding-top: 25px;
 }
 </style>

@@ -4,6 +4,8 @@ import { Router } from "express";
 import {
   upload,
   all,
+  searchStars,
+  searchGenre,
   allGenre,
   addGenre
 } from "../controllers/books.controller";
@@ -16,6 +18,10 @@ const router: Router = Router();
 // Book
 router.get("/all", all);
 router.post("/upload", validateToken, upload);
+
+// Search
+router.get("/search/genre/:genre", searchGenre);
+router.get("/search/stars/:stars", searchStars);
 
 // Genre
 router.get("/genre", allGenre);

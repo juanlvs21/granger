@@ -11,11 +11,12 @@ const bookSchema = new Schema({
   slug: { type: String, required: true },
   description: { type: String, required: false },
   authors: { type: String },
-  yearPublication: { type: Number },
+  yearPublication: { type: Number, default: 0 },
   genre: { type: [String] },
   available: { type: Boolean, required: true, default: true },
   price: { type: Number, required: true },
   stars: { type: Number, required: false, default: 0 },
+  punctuated: { type: Number, required: false, default: 0 },
   uploadedBy: { type: {}, required: true },
   created_date: {
     type: String,

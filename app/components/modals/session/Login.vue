@@ -6,12 +6,7 @@
       </header>
       <section class="modal-card-body">
         <b-field label="Correo electrónico">
-          <b-input
-            type="email"
-            v-model="user.email"
-            placeholder="ejemplo@email.com"
-            required
-          ></b-input>
+          <b-input type="email" v-model="user.email" placeholder="ejemplo@email.com" required></b-input>
         </b-field>
 
         <b-field label="Contraseña">
@@ -28,9 +23,7 @@
         <Notification v-if="error" type="is-danger" :message="error" />
       </section>
       <footer class="modal-card-foot">
-        <button class="button" type="button" @click="$parent.close()">
-          Cerrar
-        </button>
+        <button class="button" type="button" @click="$parent.close()">Cerrar</button>
         <button class="button is-primary">Entrar</button>
       </footer>
     </div>
@@ -73,7 +66,7 @@ export default {
         })
         .catch(err => {
           console.log(err.response.data)
-          if (err.response.data.code === 'auth/Wrong-email-or-password') {
+          if (err.response.data.code === 'auth/wrong-email-or-password') {
             this.error = err.response.data.message.es
             setTimeout(() => (this.error = null), 5000)
           } else if (err.response.data.code === 'validator/wrong-fields') {

@@ -14,7 +14,7 @@
         <div class="columns is-multiline">
           <div class="column">
             <b-field label="Titulo">
-              <b-input placeholder="Titulo" v-model="newBook.title"></b-input>
+              <b-input placeholder="Titulo" v-model="newBook.title" required></b-input>
             </b-field>
             <b-field label="Autor/Autores">
               <b-input placeholder="Autor/Autores" v-model="newBook.authors"></b-input>
@@ -22,7 +22,7 @@
           </div>
           <div class="column">
             <b-field label="Precio ($)">
-              <b-numberinput placeholder="Precio ($)" v-model="newBook.price"></b-numberinput>
+              <b-numberinput placeholder="Precio ($)" v-model="newBook.price" required></b-numberinput>
             </b-field>
             <b-field label="Año de publicación">
               <b-input placeholder="Año de publicación" v-model="newBook.yearPublication"></b-input>
@@ -47,7 +47,7 @@
         <div class="columns is-multiline">
           <div class="column">
             <b-field class="file">
-              <b-upload v-model="files.pdf">
+              <b-upload v-model="files.pdf" required>
                 <a class="button is-primary">
                   <b-icon icon="upload"></b-icon>
                   <span>Libro (PDF)</span>
@@ -58,7 +58,7 @@
           </div>
           <div class="column">
             <b-field class="file">
-              <b-upload v-model="files.cover">
+              <b-upload v-model="files.cover" required>
                 <a class="button is-primary">
                   <b-icon icon="upload"></b-icon>
                   <span>Portada</span>
@@ -151,6 +151,7 @@ export default {
         .catch(err => {
           if (
             err.response.data.code === 'auth/authentication-required' ||
+            err.response.data.code === 'books/the-book-already-exists' ||
             err.response.data.code === 'books/cover-pdf-is-required' ||
             err.response.data.code === 'books/cover-is-required' ||
             err.response.data.code === 'books/cover-must-be-jpg-jpeg-png' ||

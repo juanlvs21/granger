@@ -24,14 +24,13 @@
       <p class="granger__book-card-details-authors">
         <i>{{ book.authors }}</i>
       </p>
-      <nuxt-link to="/" class="button is-small is-primary is-rounded"
-        >Ver más</nuxt-link
-      >
+      <nuxt-link to="/" class="button is-small is-primary is-rounded">Ver más</nuxt-link>
     </div>
   </div>
 </template>
 
 <script>
+// Components
 import Stars from '~/components/books/Stars'
 
 export default {
@@ -57,7 +56,7 @@ export default {
   display: inline-block;
   width: 200px;
   height: 300px;
-  margin: 25px 10px;
+  margin: 0 10px 25px 10px;
   left: 0;
   cursor: pointer;
   transition: all 450ms;

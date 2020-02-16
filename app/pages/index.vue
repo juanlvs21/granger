@@ -7,20 +7,24 @@
     </div>
 
     <div class="container">
-      <h1 class="granger__books-title is-size-2 has-text-centered">
-        Populares
-      </h1>
-      <CarouselFeatured :books="books" />
+      <h1 class="granger__books-title is-size-2 has-text-centered">Populares</h1>
+      <Notification v-if="errors.loadFeatured" :message="errors.loadFeatured" type="is-danger" />
+      <CarouselFeatured v-else :books="books" />
     </div>
 
-    <OfferWeek :book="books[0]" />
+    <OfferWeek v-if="errors.offerWeekAvailable" :book="books[0]" />
 
     <div class="container">
-      <h1 class="granger__books-title is-size-2 has-text-centered">
-        Nuevos Libros
-      </h1>
-      <div class=" granger__books-container">
-        <Notification v-if="error" :message="error" />
+      <h1
+        class="granger__books-title granger__books-title-new is-size-2 has-text-centered"
+      >Nuevos Libros</h1>
+      <div class="granger__books-container">
+        <Notification
+          v-if="errors.loadBooks"
+          :message="errors.loadBooks"
+          type="is-danger"
+          style="width: 100%"
+        />
         <BookCard v-else v-for="book in books" :key="book.uuid" :book="book" />
       </div>
     </div>
@@ -58,7 +62,11 @@ export default {
   },
   data() {
     return {
-      error: null,
+      errors: {
+        loadBooks: null,
+        loadFeatured: null,
+        offerWeekAvailable: false
+      },
       books: [],
       whatWeOffer: [
         {
@@ -82,8 +90,16 @@ export default {
   },
   asyncData({ $axios }) {
     return $axios.$get(`${process.env.URL_SERVER}/api/books/all`).then(res => {
-      return { books: res.data }
-      // return { error: 'Ha ocurrido un error' }
+      if (res.data.length === 0) {
+        return {
+          error: {
+            loadBooks: 'No hay libros disponibles',
+            loadFeatured: 'No hay libros disponibles'
+          }
+        }
+      } else {
+        return { books: res.data }
+      }
     })
   }
 }
@@ -96,9 +112,15 @@ export default {
   justify-content: center;
   flex-wrap: wrap;
 }
+
 .granger__books-title {
   margin-top: 30px;
 }
+
+.granger__books-title-new {
+  margin-bottom: 30px;
+}
+
 .granger__books-container {
   display: flex;
   justify-content: center;

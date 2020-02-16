@@ -128,7 +128,7 @@ export const signin = async (req: Request, res: Response) => {
       return msgResponse(
         res,
         400,
-        "auth/Wrong-email-or-password",
+        "auth/wrong-email-or-password",
         "Wrong email or password",
         "Correo o contraseña equivocada",
         null
@@ -141,7 +141,7 @@ export const signin = async (req: Request, res: Response) => {
       return msgResponse(
         res,
         400,
-        "auth/Wrong-email-or-password",
+        "auth/wrong-email-or-password",
         "Wrong email or password",
         "Correo o contraseña equivocada",
         null
