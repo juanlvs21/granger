@@ -11,7 +11,7 @@ export default interface IBook extends Document {
   genre?: [string];
   price: number;
   stars: number;
-  punctuated: number;
+  scores: [{}];
   uploadedBy: {};
   created_date: string;
   cover: string;

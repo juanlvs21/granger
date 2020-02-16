@@ -15,15 +15,11 @@
         <template v-if="session && session.admin">
           <b-navbar-dropdown label="Libros">
             <b-navbar-item tag="router-link" to="/books">Todos</b-navbar-item>
-            <b-navbar-item tag="router-link" to="/books/upload">
-              Nuevo
-            </b-navbar-item>
+            <b-navbar-item tag="router-link" to="/books/upload">Nuevo</b-navbar-item>
           </b-navbar-dropdown>
         </template>
         <template v-else>
-          <b-navbar-item tag="router-link" to="/books">
-            Libros
-          </b-navbar-item>
+          <b-navbar-item tag="router-link" to="/books">Libros</b-navbar-item>
         </template>
       </template>
 
@@ -40,12 +36,7 @@
               <nuxt-link to="/auth/signup" class="button is-primary is-small">
                 <strong>Registrar</strong>
               </nuxt-link>
-              <b-button
-                type="is-light"
-                size="is-small"
-                @click="showModalLogin = true"
-                >Entrar</b-button
-              >
+              <b-button type="is-light" size="is-small" @click="showModalLogin = true">Entrar</b-button>
             </div>
           </b-navbar-item>
         </template>
@@ -53,13 +44,7 @@
     </b-navbar>
 
     <!-- Modal Login -->
-    <b-modal
-      :active.sync="showModalLogin"
-      has-modal-card
-      trap-focus
-      aria-role="dialog"
-      aria-modal
-    >
+    <b-modal :active.sync="showModalLogin" has-modal-card trap-focus aria-role="dialog" aria-modal>
       <ModalLogin />
     </b-modal>
   </div>

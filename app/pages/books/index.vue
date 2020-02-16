@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <div class="container granger__books-container">
+  <div class="granger__books-container">
+    <div class="container">
       <h1 class="granger__books-title is-size-2 has-text-centered">Lista de Libros</h1>
       <div class="columns">
         <div class="column is-3">
@@ -21,15 +21,18 @@
                   <aside class="menu">
                     <p class="menu-label">Encuentra tú libro</p>
                     <ul class="menu-list">
-                      <b-field>
-                        <b-input
-                          placeholder="Buscar"
-                          type="search"
-                          icon="magnify"
-                          icon-clickable
-                          @icon-click="handleSearch"
-                        ></b-input>
-                      </b-field>
+                      <form @submit.prevent="handleSearch">
+                        <b-field>
+                          <b-input
+                            placeholder="Buscar"
+                            type="search"
+                            icon="magnify"
+                            icon-clickable
+                            native-type="submit"
+                            @icon-click="handleSearch"
+                          ></b-input>
+                        </b-field>
+                      </form>
                     </ul>
                   </aside>
                 </div>
@@ -59,12 +62,15 @@
                   <aside class="menu">
                     <p class="menu-label">Buscar por Género</p>
                     <ul class="menu-list granger__menu-list">
-                      <li v-for="(genre, i) in genres" :key="i">
-                        <a
-                          @click="handleFilters('genre', genre.genre)"
-                          :class="[selectedGenre === genre.genre ? 'is-active' : null]"
-                        >{{ genre.genre }}</a>
-                      </li>
+                      <span v-if="error.genres">Sin géneros disponibles</span>
+                      <template v-else>
+                        <li v-for="(genre, i) in genres" :key="i">
+                          <a
+                            @click="handleFilters('genre', genre.genre)"
+                            :class="[selectedGenre === genre.genre ? 'is-active' : null]"
+                          >{{ genre.genre }}</a>
+                        </li>
+                      </template>
                     </ul>
                   </aside>
                 </div>
@@ -74,14 +80,14 @@
         </div>
         <div class="column is-9">
           <div class="granger__books-list-container">
-            <Notification v-if="error" :message="error" type="is-danger" />
+            <Notification v-if="error.books" :message="error.books" type="is-danger" />
             <BookCard v-else v-for="book in books" :key="book.uuid" :book="book" />
           </div>
         </div>
       </div>
-      <b-loading :is-full-page="false" :active.sync="isLoading"></b-loading>
     </div>
-    <Newsletter />
+    <b-loading :is-full-page="false" :active.sync="isLoading"></b-loading>
+    <Newsletter style="margin-top: 100px;" />
   </div>
 </template>
 
@@ -111,18 +117,23 @@ export default {
       books: [],
       genres: [],
       isLoading: false,
-      error: null,
+      error: {
+        books: null,
+        genres: null
+      },
       selectedStars: 0,
       selectedGenre: null,
       filteredOut: false
     }
   },
   methods: {
-    async handleSearch() {},
+    async handleSearch() {
+      await alert('Pronto :c')
+    },
     async handleFilters(filter, data) {
       this.isLoading = true
       this.filteredOut = true
-      this.error = null
+      this.error.books = null
 
       if (filter === 'stars') {
         //  If the filter is' star ', the new value of 'selectedStars' is assigned and the new value of 'selectedGenre' is null
@@ -138,7 +149,7 @@ export default {
         .$get(`${process.env.URL_SERVER}/api/books/search/${filter}/${data}`)
         .then(({ data }) => {
           if (data.length === 0) {
-            this.error = 'Resultados no encontrados'
+            this.error.books = 'Resultados no encontrados'
           } else {
             this.books = data
           }
@@ -150,12 +161,12 @@ export default {
     },
     async handleRemoveFilters() {
       this.isLoading = true
-      this.error = null
+      this.error.books = null
       this.selectedStars = 0
       this.selectedGenre = null
 
       await this.$axios
-        .$get(`${process.env.URL_SERVER}/api/books/all`)
+        .$get(`${process.env.URL_SERVER}/api/books`)
         .then(({ data }) => {
           this.filteredOut = false
           this.books = data
@@ -168,14 +179,27 @@ export default {
   },
   async asyncData({ $axios }) {
     try {
-      const books = await $axios.$get(`${process.env.URL_SERVER}/api/books/all`)
-      const genres = await $axios.$get(
+      const getBooks = await $axios.$get(`${process.env.URL_SERVER}/api/books`)
+      const getGenres = await $axios.$get(
         `${process.env.URL_SERVER}/api/books/genre`
       )
 
+      let books = []
+      let error = {
+        genres: null,
+        books: null
+      }
+
+      if (getBooks.length === 0) {
+        error.books = 'Resultados no encontrados'
+      } else {
+        books = getBooks.data
+      }
+
       return {
-        books: books.data,
-        genres: genres.data
+        genres: getGenres.data,
+        books,
+        error
       }
     } catch (err) {}
   }
@@ -185,7 +209,6 @@ export default {
 <style scoped lang="scss">
 .granger__books-container {
   padding-top: 30px;
-  margin-bottom: 30px;
 
   .granger__books-title {
     margin-bottom: 30px;

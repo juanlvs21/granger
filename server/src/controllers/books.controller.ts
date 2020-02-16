@@ -194,11 +194,19 @@ export const upload = async (req: Request, res: Response) => {
   }
 };
 
-export const all = async (req: Request, res: Response) => {
+export const getAll = async (req: Request, res: Response) => {
   try {
     let books: any = await Book.find();
     // Values ​​that should not be sent are discarded
     books = books.map((book: IBook) => {
+      let totalStars: number = 0;
+
+      if (book.scores.length > 0) {
+        book.scores.map((score: any) => {
+          totalStars = totalStars + score.star;
+        });
+      }
+
       return {
         uuid: book.uuid,
         authors: book.authors,
@@ -207,9 +215,9 @@ export const all = async (req: Request, res: Response) => {
         pdf: book.pdf,
         price: book.price,
         title: book.title,
+        description: book.description,
         slug: book.slug,
-        stars: book.stars,
-        punctuated: book.punctuated,
+        stars: totalStars === 0 ? 0 : totalStars / book.scores.length,
         yearPublication: book.yearPublication
       };
     });
@@ -236,6 +244,67 @@ export const all = async (req: Request, res: Response) => {
   }
 };
 
+export const getWithSlug = async (req: Request, res: Response) => {
+  try {
+    const { slug } = req.params;
+
+    let book: any = await Book.findOne({ slug });
+
+    // It is verified that the book exists
+    if (!book)
+      return msgResponse(
+        res,
+        400,
+        "books/does-not-exist",
+        "The book does not exist",
+        "El libro no existe",
+        null
+      );
+
+    let totalStars: number = 0;
+
+    if (book.scores.length > 0) {
+      book.scores.map((score: any) => {
+        totalStars = totalStars + score.star;
+      });
+    }
+
+    book = {
+      uuid: book.uuid,
+      authors: book.authors,
+      cover: book.cover,
+      genre: book.genre,
+      pdf: book.pdf,
+      price: book.price,
+      title: book.title,
+      description: book.description,
+      slug: book.slug,
+      stars: totalStars === 0 ? 0 : totalStars / book.scores.length,
+      yearPublication: book.yearPublication
+    };
+
+    // Response
+    msgResponse(
+      res,
+      200,
+      "books/get-with-slug",
+      "Get a book using the slug",
+      "Conseguir un libro usando el slug",
+      book
+    );
+  } catch (err) {
+    // Response catch error
+    msgResponse(
+      res,
+      500,
+      "books/error-loading",
+      "Error loading the book",
+      "Error al cargar el libro",
+      null
+    );
+  }
+};
+
 // Search
 export const searchStars = async (req: Request, res: Response) => {
   try {
@@ -247,7 +316,16 @@ export const searchStars = async (req: Request, res: Response) => {
 
     books.map((book: IBook) => {
       // The total amount of stars is taken and it divided between the number of times it was rated and thus, obtaining the average stars
-      const averageOfStar: any = book.stars / book.punctuated;
+      let totalStars: number = 0;
+
+      if (book.scores.length > 0) {
+        book.scores.map((score: any) => {
+          totalStars = totalStars + score.star;
+        });
+      }
+
+      const averageOfStar: any = totalStars / book.scores.length;
+
       // The decimals are ignored, taking into account only the whole number. To compare with the amount of stars requested
       if (parseInt(averageOfStar) === parseInt(stars)) {
         booksResponse.push({
@@ -258,9 +336,9 @@ export const searchStars = async (req: Request, res: Response) => {
           pdf: book.pdf,
           price: book.price,
           title: book.title,
+          description: book.description,
           slug: book.slug,
-          stars: book.stars,
-          punctuated: book.punctuated,
+          stars: totalStars === 0 ? 0 : totalStars / book.scores.length,
           yearPublication: book.yearPublication
         });
       }
@@ -330,7 +408,7 @@ export const searchGenre = async (req: Request, res: Response) => {
 };
 
 // Genres
-export const allGenre = async (req: Request, res: Response) => {
+export const getAllGenre = async (req: Request, res: Response) => {
   try {
     const genres: IGenre[] = await Genre.find();
 

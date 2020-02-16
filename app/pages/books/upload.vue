@@ -1,5 +1,5 @@
 <template>
-  <div class="granger__books-genres-tagss-upload-container">
+  <div class="granger__books-genres-tags-upload-container">
     <div class="container">
       <h1 class="is-size-2 has-text-centered has-text-weight-semibold">Nuevo libro</h1>
       <form @submit.prevent="handleSubmit">
@@ -177,14 +177,14 @@ export default {
 </script>
 
 <style lang="scss">
-.granger__books-genres-tagss-upload-container {
+.granger__books-genres-tags-upload-container {
   .textarea {
     resize: none !important;
   }
 }
 </style>
 <style scoped lang="scss">
-.granger__books-genres-tagss-upload-container {
+.granger__books-genres-tags-upload-container {
   height: calc(100vh - 112px);
   overflow-y: auto;
   padding: 30px 10px 10px 10px;
@@ -221,13 +221,13 @@ export default {
 }
 
 @media (max-width: 768px) {
-  .granger__books-genres-tagss-upload-container {
+  .granger__books-genres-tags-upload-container {
     height: calc(100vh - 132px);
   }
 }
 
 @media (max-width: 425px) {
-  .granger__books-genres-tagss-upload-container {
+  .granger__books-genres-tags-upload-container {
     height: calc(100vh - 152px);
   }
 }

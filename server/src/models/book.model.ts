@@ -8,7 +8,7 @@ import IBook from "../interfaces/IBook";
 const bookSchema = new Schema({
   uuid: { type: String, unique: true, required: true },
   title: { type: String, required: true },
-  slug: { type: String, required: true },
+  slug: { type: String, unique: true, required: true },
   description: { type: String, required: false },
   authors: { type: String },
   yearPublication: { type: Number, default: 0 },
@@ -16,7 +16,7 @@ const bookSchema = new Schema({
   available: { type: Boolean, required: true, default: true },
   price: { type: Number, required: true },
   stars: { type: Number, required: false, default: 0 },
-  punctuated: { type: Number, required: false, default: 0 },
+  scores: { type: [{}], required: false, default: [] },
   uploadedBy: { type: {}, required: true },
   created_date: {
     type: String,

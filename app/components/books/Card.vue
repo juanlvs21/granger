@@ -12,6 +12,7 @@
         data-title="Añadir a Favoritos"
         @mouseover="favOver = true"
         @mouseleave="favOver = false"
+        @click="handleFavorite"
       >
         <i v-if="favOver" class="fas fa-heart"></i>
         <i v-else class="far fa-heart"></i>
@@ -24,7 +25,7 @@
       <p class="granger__book-card-details-authors">
         <i>{{ book.authors }}</i>
       </p>
-      <nuxt-link to="/" class="button is-small is-primary is-rounded">Ver más</nuxt-link>
+      <nuxt-link :to="`/books/${book.slug}`" class="button is-small is-primary is-rounded">Ver más</nuxt-link>
     </div>
   </div>
 </template>
@@ -43,6 +44,11 @@ export default {
     return {
       server: process.env.URL_SERVER,
       favOver: false
+    }
+  },
+  methods: {
+    async handleFavorite() {
+      await alert('Pronto :c')
     }
   }
 }

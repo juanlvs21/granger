@@ -88,19 +88,21 @@ export default {
       ]
     }
   },
-  asyncData({ $axios }) {
-    return $axios.$get(`${process.env.URL_SERVER}/api/books/all`).then(res => {
-      if (res.data.length === 0) {
-        return {
-          error: {
-            loadBooks: 'No hay libros disponibles',
-            loadFeatured: 'No hay libros disponibles'
+  async asyncData({ $axios }) {
+    return await $axios
+      .$get(`${process.env.URL_SERVER}/api/books`)
+      .then(res => {
+        if (res.data.length === 0) {
+          return {
+            error: {
+              loadBooks: 'No hay libros disponibles',
+              loadFeatured: 'No hay libros disponibles'
+            }
           }
+        } else {
+          return { books: res.data }
         }
-      } else {
-        return { books: res.data }
-      }
-    })
+      })
   }
 }
 </script>
