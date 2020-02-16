@@ -4,3 +4,20 @@
   --info: #3f4d71;
   --red: #e16363;
 }
+// Imports
+@import 'transitions.scss';
+
+// HTML
+html {
+  overflow: hidden !important;
+}
+
+// Modal Card
+.modal-card {
+  margin: 20px !important;
+}
+
+.modal-card-foot {
+  display: flex !important;
+  justify-content: center !important;
+}

@@ -15,7 +15,7 @@ import msgResponse from "../utils/msgResponse";
 import msgResponseValidatorInputs from "../utils/validate/user/responseValidateUser";
 
 // sendEmail
-import sendEmail from "../utils/email/sendEmail";
+import { emailSignup } from "../utils/email/sendEmail";
 import welcomeTemplate from "../utils/email/templates/welcome";
 
 export const signup = async (req: Request, res: Response) => {
@@ -76,13 +76,18 @@ export const signup = async (req: Request, res: Response) => {
 
     // Send registration email
 
-    await sendEmail(
+    await emailSignup(
       savedUser.email,
       "Registro exitoso✔",
       welcomeTemplate(savedUser.firstName)
-    ).catch(err => {
-      console.log("Error: ", err);
-    });
+    )
+      .then(res => {
+        console.log("Email Send");
+        console.log(res);
+      })
+      .catch(err => {
+        console.log("Error: ", err);
+      });
 
     // Response
     msgResponse(

@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  name: 'Libros | Granger',
+  name: 'Books-page',
   transition: 'fade',
   head() {
     return {

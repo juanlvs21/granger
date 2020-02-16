@@ -3,8 +3,8 @@
     <Navbar />
     <div class="granger__content">
       <nuxt />
+      <Footer />
     </div>
-    <Footer />
   </div>
 </template>
 
@@ -24,6 +24,7 @@ export default {
 
 <style scoped lang="scss">
 .granger__content {
-  /* position: relative; */
+  height: calc(100vh - 52px);
+  overflow-y: scroll;
 }
 </style>
