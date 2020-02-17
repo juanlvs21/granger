@@ -95,8 +95,12 @@ export default {
     text-align: right;
 
     .granger__book-img {
+      width: 260px;
       height: 400px;
+      -o-object-fit: cover;
+      object-fit: cover;
       border-radius: 10px;
+      margin-right: 100px;
     }
   }
 
@@ -107,6 +111,18 @@ export default {
 
     p {
       margin-top: 10px;
+    }
+  }
+}
+
+@media (max-width: 1024px) {
+  .granger__book-container {
+    .granger__book-cover-container {
+      text-align: center;
+
+      .granger__book-img {
+        margin-right: 0;
+      }
     }
   }
 }
