@@ -6,15 +6,15 @@
       <WhatWeOffer v-for="(offer, i) in whatWeOffer" :key="i" :offer="offer" />
     </div>
 
-    <div class="container">
-      <h1 class="granger__books-title is-size-2 has-text-centered">Populares</h1>
+    <div class="container" v-show="featuredBooks.length">
+      <h1 class="granger__books-title is-size-2 has-text-centered">Libros Destacados</h1>
       <Notification v-if="errors.loadFeatured" :message="errors.loadFeatured" type="is-danger" />
-      <CarouselFeatured v-else :books="books" />
+      <CarouselFeatured v-else :books="featuredBooks" />
     </div>
 
-    <OfferWeek v-if="errors.offerWeekAvailable" :book="books[0]" />
+    <!-- <OfferWeek v-if="errors.offerWeekAvailable" :book="books[0]" /> -->
 
-    <div class="container">
+    <div class="container" v-show="newBooks.length">
       <h1
         class="granger__books-title granger__books-title-new is-size-2 has-text-centered"
       >Nuevos Libros</h1>
@@ -25,7 +25,7 @@
           type="is-danger"
           style="width: 100%"
         />
-        <BookCard v-else v-for="book in books" :key="book.uuid" :book="book" />
+        <BookCard v-else v-for="book in newBooks" :key="book.uuid" :book="book" />
       </div>
     </div>
 
@@ -67,7 +67,8 @@ export default {
         loadFeatured: null,
         offerWeekAvailable: false
       },
-      books: [],
+      newBooks: [],
+      featuredBooks: [],
       whatWeOffer: [
         {
           title: 'Descarga imediata',
@@ -92,16 +93,10 @@ export default {
     return await $axios
       .$get(`${process.env.URL_SERVER}/api/books`)
       .then(res => {
-        if (res.data.length === 0) {
-          return {
-            error: {
-              loadBooks: 'No hay libros disponibles',
-              loadFeatured: 'No hay libros disponibles'
-            }
+        return { 
+          newBooks: res.data,
+          featuredBooks: []
           }
-        } else {
-          return { books: res.data }
-        }
       })
   }
 }

@@ -3,11 +3,7 @@
     <b-navbar type="is-primary">
       <template slot="brand">
         <b-navbar-item tag="router-link" to="/">
-          <!-- <img
-          src="https://raw.githubusercontent.com/buefy/buefy/dev/static/img/buefy-logo.png"
-          alt="Lightweight UI components for Vue.js based on Bulma"
-          />-->
-          Granger
+          <img src="/images/logo-pluma.png" alt="Granger"/>
         </b-navbar-item>
       </template>
       <template slot="start">

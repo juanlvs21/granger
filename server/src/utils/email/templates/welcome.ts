@@ -7,10 +7,10 @@ const welcomeTemplate = (name: string) => {
       <h1>Bienvenido a Granger 📖</h1>
     </header>
     <div class="granger__mail-content" style="padding: 5% 10%;">
-      <h2 style="text-align: center;"><i>¡Felicidades por crear tu cuenta!🎉</i></h2>
       <div style="text-align: center;">
-        <img src="cid:logo" alt="Granger" />
+        <img src="cid:logo" alt="Granger" style="width: 150px;" />
       </div>
+      <h2 style="text-align: center;"><i>¡Felicidades por crear tu cuenta!🎉</i></h2>
       <h3>Hola ${name},</h3>
       <p>
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Busca tu libro favorito en
@@ -28,7 +28,7 @@ const welcomeTemplate = (name: string) => {
       <p style="margin: 5px;">
         <i
           >Copyright © ${year}
-          <a style="color: #cf56a1; font-weight: bold;text-decoration: none;" href="http://www.granger.juancode.com">Granger</a>
+          <a style="color: #cf56a1; font-weight: bold;text-decoration: none;" href="http://www.granger.juancode.com.ve">Granger</a>
         </i>
       </p>
       <p style="margin: 5px;"><i>Venezuela, Nueva Esparta</i></p>

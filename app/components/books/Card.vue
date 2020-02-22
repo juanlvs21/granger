@@ -22,6 +22,8 @@
 
       <Stars :stars="book.stars" />
 
+      <p class="granger__book-card-details-price">$ {{ book.price }}</p>
+
       <p class="granger__book-card-details-authors">
         <i>{{ book.authors }}</i>
       </p>
@@ -136,6 +138,10 @@ export default {
       font-size: 16px;
       line-height: 18px;
       font-weight: bold;
+    }
+
+    .granger__book-card-details-price {
+      font-size: 24px;
     }
 
     .granger__book-card-details-authors {

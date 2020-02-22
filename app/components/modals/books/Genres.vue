@@ -41,6 +41,9 @@
                   </b-button>
                 </p>
               </b-field>
+
+              <!-- Error -->
+              <Notification  v-if="error" type="is-danger" :message="error" />
             </form>
           </div>
         </div>
@@ -81,14 +84,21 @@
 </template>
 
 <script>
+// Components
+import Notification from '~/components/core/Notification'
+
 export default {
   name: 'Modal-Books-Genres',
   props: ['genres'],
+  components: {
+    Notification
+  },
   data() {
     return {
       allGenres: [],
       newGenre: '',
-      isLoading: false
+      isLoading: false,
+      error: null,
     }
   },
   methods: {
@@ -105,8 +115,13 @@ export default {
     },
     async handleSubmit() {
       this.isLoading = true
-
-      await this.$axios
+     
+      if (this.newGenre.trim() === '') {
+        this.isLoading = false
+        this.error = "El campo está vacio"
+        setTimeout(() => this.error = null , 5000);
+      } else {
+        await this.$axios
         .$post(
           `${process.env.URL_SERVER}/api/books/genre`,
           { genre: this.newGenre },
@@ -122,6 +137,8 @@ export default {
         })
         .catch(err => console.log(err))
         .finally(() => (this.isLoading = false))
+      }
+      
     },
     handleAdd(genre) {
       const newGenresSelecte = this.genres
@@ -146,6 +163,9 @@ export default {
 <style scoped lang="scss">
 .granger__genres-modal-container {
   .modal-card-body {
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+
     .column {
       display: flex;
       justify-content: center;

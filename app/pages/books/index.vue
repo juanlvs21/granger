@@ -170,6 +170,9 @@ export default {
         .then(({ data }) => {
           this.filteredOut = false
           this.books = data
+          if (this.books.length === 0) {
+            this.error.books = 'No hay libros disponibles'
+          }
         })
         .catch(err => {
           console.log(err)
@@ -184,21 +187,18 @@ export default {
         `${process.env.URL_SERVER}/api/books/genre`
       )
 
-      let books = []
       let error = {
         genres: null,
         books: null
       }
 
-      if (getBooks.length === 0) {
-        error.books = 'Resultados no encontrados'
-      } else {
-        books = getBooks.data
-      }
+      if (getBooks.data.length === 0) {
+        error.books = 'No hay libros disponibles'
+      } 
 
       return {
         genres: getGenres.data,
-        books,
+        books: getBooks.data,
         error
       }
     } catch (err) {}
