@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import uuid from "uuid";
 import jwt from "jsonwebtoken";
-import Stripe from "stripe";
 
 // Models
 import User from "../models/user.model";
@@ -18,6 +17,12 @@ import msgResponseValidatorInputs from "../utils/validate/user/responseValidateU
 // sendEmail
 import { emailSignup } from "../utils/email/sendEmail";
 import welcomeTemplate from "../utils/email/templates/welcome";
+
+// Stripe
+import Stripe from "stripe";
+const stripe = new Stripe(process.env.STRIPE_SK || "", {
+  apiVersion: "2019-12-03"
+});
 
 export const signup = async (req: Request, res: Response) => {
   try {
@@ -42,11 +47,6 @@ export const signup = async (req: Request, res: Response) => {
         "Correo electrónico ya registrado",
         null
       );
-
-    // Creating new Customer
-    const stripe = new Stripe("sk_test_fZ0mAUSMmEmDgsCkApqTHyTo008t51Q0AL", {
-      apiVersion: "2019-12-03"
-    });
 
     const customer: Stripe.Customer = await stripe.customers.create({
       email: email,

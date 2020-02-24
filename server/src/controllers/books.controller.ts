@@ -16,7 +16,7 @@ import msgResponse from "../utils/msgResponse";
 
 // Stripe
 import Stripe from "stripe";
-const stripe = new Stripe("sk_test_fZ0mAUSMmEmDgsCkApqTHyTo008t51Q0AL", {
+const stripe = new Stripe(process.env.STRIPE_SK || "", {
   apiVersion: "2019-12-03"
 });
 

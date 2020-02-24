@@ -113,7 +113,7 @@ export default {
     }
   },
   mounted() {
-    this.stripe = Stripe('pk_test_WXSwlGbfspiOM9sVCK4LuOuL00ukg0GPUg')
+    this.stripe = Stripe(process.env.STRIPE_PK)
     this.elements = this.stripe.elements()
     this.cardElement = this.elements.create('card')
     this.cardElement.mount('#card-element')
