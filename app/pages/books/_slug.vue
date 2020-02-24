@@ -17,20 +17,44 @@
             <div class="granger__book-stars-container">
               <Stars :stars="book.stars" />
             </div>
+
             <p class="is-size-1 has-text-info granger__book-price">$ {{ book.price }}</p>
+
             <div class="tags">
               <span class="tag is-info" v-for="(genre, i) in book.genre" :key="i">{{ genre }}</span>
             </div>
+
+            <div class="granger__book-buy" v-if="session">
+              <b-button type="is-primary" rounded @click="handlePaymentIntent">Comprar Libro</b-button>
+            </div>
+
             <p>
               Autor/Autores:
               <b>{{ book.authors }}</b>
             </p>
+
             <p>{{ book.description }}</p>
           </div>
         </div>
       </div>
     </div>
     <b-loading :is-full-page="false" :active.sync="isLoading"></b-loading>
+
+    <!-- Modal Confirm Payment -->
+    <b-modal
+      :active.sync="showModalConfirmPayment"
+      has-modal-card
+      trap-focus
+      aria-role="dialog"
+      aria-modal
+    >
+      <ModalConfirmPayment
+        :client_secret="client_secret"
+        :payment_intents_id="payment_intents_id"
+        :book_uuid="book.uuid"
+      />
+    </b-modal>
+
     <Newsletter style="margin-top: 100px;" />
   </div>
 </template>
@@ -39,6 +63,7 @@
 // Components
 import Newsletter from '~/components/home/Newsletter'
 import Stars from '~/components/books/Stars'
+import ModalConfirmPayment from '~/components/modals/books/ConfirmPayment'
 
 export default {
   name: 'Books-details',
@@ -50,14 +75,52 @@ export default {
   },
   components: {
     Newsletter,
-    Stars
+    Stars,
+    ModalConfirmPayment
   },
   data() {
     return {
       server: process.env.URL_SERVER,
       book: {},
+      client_secret: null,
+      payment_intents_id: null,
+      showModalConfirmPayment: false,
       isLoading: false,
       error: null
+    }
+  },
+  computed: {
+    session() {
+      return this.$store.state.user
+    }
+  },
+  methods: {
+    async handlePaymentIntent() {
+      this.isLoading = true
+
+      const dataToBuy = {
+        user_email: this.session.email,
+        book_uuid: this.book.uuid
+      }
+      await this.$axios
+        .$post(
+          `${process.env.URL_SERVER}/api/books/paymentIntents`,
+          dataToBuy,
+          {
+            headers: {
+              authorization: this.session.token
+            }
+          }
+        )
+        .then(({ data }) => {
+          this.payment_intents_id = data.id
+          this.client_secret = data.client_secret
+          this.showModalConfirmPayment = true
+        })
+        .catch(err => {
+          console.log(err)
+        })
+        .finally(() => (this.isLoading = false))
     }
   },
   async asyncData({ $axios, params }) {
@@ -110,6 +173,10 @@ export default {
     }
 
     p {
+      margin-top: 10px;
+    }
+
+    .granger__book-buy {
       margin-top: 10px;
     }
   }

@@ -3,7 +3,7 @@
     <b-navbar type="is-primary">
       <template slot="brand">
         <b-navbar-item tag="router-link" to="/">
-          <img src="/images/logo-pluma.png" alt="Granger"/>
+          <img src="/images/logo-white-feather.png" alt="Granger" />
         </b-navbar-item>
       </template>
       <template slot="start">

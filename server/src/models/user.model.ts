@@ -7,6 +7,7 @@ import IUser from "../interfaces/IUser";
 // Schema
 const userSchema = new Schema({
   uuid: { type: String, unique: true, required: true },
+  customer_id: { type: String, unique: true, required: true },
   email: { type: String, unique: true, required: true, min: 8 },
   password: { type: String, required: true, min: 6 },
   firstName: { type: String },

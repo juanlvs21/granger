@@ -5,6 +5,7 @@ import uuid from "uuid";
 // Models
 import Book from "../models/book.model";
 import Genre from "../models/genre.mode";
+import User from "../models/user.model";
 
 // Interface
 import IBook from "../interfaces/IBook";
@@ -12,6 +13,16 @@ import IGenre from "../interfaces/IGenre";
 
 // Libs
 import msgResponse from "../utils/msgResponse";
+
+// Stripe
+import Stripe from "stripe";
+const stripe = new Stripe("sk_test_fZ0mAUSMmEmDgsCkApqTHyTo008t51Q0AL", {
+  apiVersion: "2019-12-03"
+});
+
+// sendEmail
+import { emailSendBook } from "../utils/email/sendEmail";
+import sendBook from "../utils/email/templates/sendBook";
 
 // Books
 export const upload = async (req: Request, res: Response) => {
@@ -194,6 +205,181 @@ export const upload = async (req: Request, res: Response) => {
   }
 };
 
+export const paymentIntents = async (req: Request, res: Response) => {
+  try {
+    const { user_email, book_uuid } = req.body;
+
+    const user: any = await User.findOne({ email: user_email });
+    const book: any = await Book.findOne({ uuid: book_uuid });
+
+    // If the user does not exist
+    if (!user)
+      return msgResponse(
+        res,
+        400,
+        "books/user-not-found",
+        "User not found",
+        "Usuario no encontrado",
+        null
+      );
+
+    // If the book does not exist
+    if (!book)
+      return msgResponse(
+        res,
+        400,
+        "books/not-found",
+        "Book not found",
+        "Libro no encontrado",
+        null
+      );
+
+    await stripe.paymentIntents
+      .create({
+        payment_method_types: ["card"],
+        amount: book.price * 100,
+        currency: "usd",
+        receipt_email: user.email,
+        customer: user.customer_id,
+        description: `Purchase of the book: ${book.title}`
+      })
+      .then(({ id, client_secret }) => {
+        // Response
+        msgResponse(
+          res,
+          200,
+          "books/paymentintent-successful",
+          "Paymentintent successful",
+          "Pago exitoso",
+          { id, client_secret }
+        );
+      })
+      .catch(err => {
+        // Response catch error
+        msgResponse(
+          res,
+          400,
+          "books/error-process-payment",
+          "Error trying to process payment",
+          "Error al intentar procesar el pago",
+          null
+        );
+      });
+  } catch (err) {
+    // Response catch error
+    msgResponse(
+      res,
+      500,
+      "books/error-process-payment",
+      "Error trying to process payment",
+      "Error al intentar procesar el pago",
+      null
+    );
+  }
+};
+
+export const paymentSucceeded = async (req: Request, res: Response) => {
+  try {
+    const { payment_intents, book_uuid, user_email } = req.body;
+
+    await stripe.paymentIntents
+      .retrieve(payment_intents)
+      .then(async ({ receipt_email, status }) => {
+        if (status == "succeeded") {
+          const book = await Book.findOne({ uuid: book_uuid });
+          const user = await User.findOne({ email: user_email });
+
+          // If the user does not exist
+          if (!user)
+            return msgResponse(
+              res,
+              400,
+              "books/user-not-found",
+              "User not found",
+              "Usuario no encontrado",
+              null
+            );
+
+          // If the book does not exist
+          if (!book)
+            return msgResponse(
+              res,
+              400,
+              "books/not-found",
+              "Book not found",
+              "Libro no encontrado",
+              null
+            );
+
+          // Send registration email
+          await emailSendBook(
+            user.email,
+            "Disfrute su nuevo libro📖",
+            sendBook(user.firstName),
+            {
+              title: book.title,
+              slug: book.slug,
+              pdf: book.pdf
+            }
+          )
+            .then(res => {
+              console.log("Book - Email Send");
+            })
+            .catch(err => {
+              msgResponse(
+                res,
+                500,
+                "books/error-sending-book",
+                "Error sending book",
+                "Error al enviar el libro",
+                null
+              );
+            });
+
+          // Response
+          msgResponse(
+            res,
+            200,
+            "books/paymentintent-successful",
+            "Paymentintent successful",
+            "Pago exitoso",
+            null
+          );
+        } else {
+          msgResponse(
+            res,
+            400,
+            "books/requires-payment-method",
+            "Requires payment method",
+            "Requiere método de pago",
+            null
+          );
+        }
+      })
+      .catch(err => {
+        // Response catch error
+        msgResponse(
+          res,
+          400,
+          "books/paymentintent-not-found",
+          "Paymentintent not found",
+          "Pago no encontrado",
+          null
+        );
+      });
+  } catch (err) {
+    // Response catch error
+    msgResponse(
+      res,
+      500,
+      "books/error-sending-book",
+      "Error sending book",
+      "Error al enviar el libro",
+      null
+    );
+  }
+};
+
 export const getAll = async (req: Request, res: Response) => {
   try {
     let books: any = await Book.find();
@@ -236,9 +422,9 @@ export const getAll = async (req: Request, res: Response) => {
     msgResponse(
       res,
       500,
-      "books/error-loading",
-      "Error loading books",
-      "Error al cargar los libros",
+      "books/error-to-buy",
+      "Error buying the book",
+      "Error al comprar el libro",
       null
     );
   }

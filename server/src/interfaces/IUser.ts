@@ -6,6 +6,7 @@ import IBook from "./IBook";
 export default interface IUser extends Document {
   _id: string;
   uuid: string;
+  customer_id: string;
   email: string;
   password: string | string;
   firstName: string;

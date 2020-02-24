@@ -3,6 +3,8 @@ import { Router } from "express";
 // Controllers
 import {
   upload,
+  paymentIntents,
+  paymentSucceeded,
   getAll,
   getWithSlug,
   searchStars,
@@ -13,7 +15,7 @@ import {
 
 // Middlewares
 import { validateToken } from "../utils/validateToken";
-import { validateGenre } from "../utils/validate/book/validateGenre"
+import { validateGenre } from "../utils/validate/book/validateGenre";
 
 const router: Router = Router();
 
@@ -21,6 +23,8 @@ const router: Router = Router();
 router.get("/", getAll);
 router.get("/slug/:slug", getWithSlug);
 router.post("/upload", [validateToken], upload);
+router.post("/paymentIntents", [validateToken], paymentIntents);
+router.post("/payment-succeeded", [validateToken], paymentSucceeded);
 
 // Search
 router.get("/search/genre/:genre", searchGenre);

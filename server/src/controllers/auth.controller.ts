@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import uuid from "uuid";
 import jwt from "jsonwebtoken";
+import Stripe from "stripe";
 
 // Models
 import User from "../models/user.model";
@@ -42,9 +43,20 @@ export const signup = async (req: Request, res: Response) => {
         null
       );
 
+    // Creating new Customer
+    const stripe = new Stripe("sk_test_fZ0mAUSMmEmDgsCkApqTHyTo008t51Q0AL", {
+      apiVersion: "2019-12-03"
+    });
+
+    const customer: Stripe.Customer = await stripe.customers.create({
+      email: email,
+      name: `${firstName} ${lastName}`
+    });
+
     // Creating new user
     const user: IUser = new User({
       uuid: uuid.v1(),
+      customer_id: customer.id,
       email,
       password,
       firstName,
@@ -75,7 +87,6 @@ export const signup = async (req: Request, res: Response) => {
     };
 
     // Send registration email
-
     await emailSignup(
       savedUser.email,
       "Registro exitoso✔",
