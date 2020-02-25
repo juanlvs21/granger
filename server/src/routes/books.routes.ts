@@ -10,6 +10,7 @@ import {
   searchStars,
   searchGenre,
   getAllGenre,
+  updateGenre,
   deleteGenre,
   addGenre
 } from "../controllers/books.controller";
@@ -34,6 +35,7 @@ router.get("/search/stars/:stars", searchStars);
 // Genre
 router.get("/genre", getAllGenre);
 router.post("/genre", [validateToken, validateGenre], addGenre);
+router.put("/genre", [validateToken], updateGenre);
 router.delete("/genre/:id", [validateToken], deleteGenre);
 
 export default router;

@@ -655,6 +655,47 @@ export const addGenre = async (req: Request, res: Response) => {
   }
 };
 
+export const updateGenre = async (req: Request, res: Response) => {
+  try {
+    const { _id, genre } = req.body;
+
+    const existGenre = await Genre.findOne({ _id });
+
+    // If the genre does not exist
+    if (!existGenre)
+      return msgResponse(
+        res,
+        400,
+        "genre/not-found",
+        "Genre not found",
+        "Género no encontrado",
+        null
+      );
+
+    const updatedGenre: IGenre = await Genre.updateOne({ _id }, { genre });
+
+    msgResponse(
+      res,
+      200,
+      "genre/successfully-updated",
+      "Genre successfully updated",
+      "Género actualizado correctamente",
+      null
+    );
+  } catch (err) {
+    // Response catch error
+    console.log(err);
+    msgResponse(
+      res,
+      500,
+      "genre/not-updated",
+      "Genre not updated",
+      "Género no actualizado",
+      null
+    );
+  }
+};
+
 export const deleteGenre = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;

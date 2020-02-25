@@ -24,7 +24,7 @@
                 <div>{{ props.row.genre }}</div>
               </b-table-column>
               <b-table-column label="Acciones" centered>
-                <button class="granger__genre-action-btn">
+                <button class="granger__genre-action-btn" @click="handleShowModalEdit(props.row)">
                   <i class="fas fa-edit"></i>
                 </button>
                 <button class="granger__genre-action-btn" @click="handleDelete(props.row)">
@@ -34,18 +34,48 @@
             </template>
             <template slot="bottom-left">
               <div class="granger__genre-new-btn">
-                <b-button type="is-primary" size="is-small">Nuevo Género</b-button>
+                <b-button
+                  type="is-primary"
+                  size="is-small"
+                  @click="showModalAddGenre = true"
+                >Nuevo Género</b-button>
               </div>
             </template>
           </b-table>
         </div>
       </div>
     </div>
+
+    <!-- Modal Add Genre -->
+    <b-modal
+      :active.sync="showModalAddGenre"
+      has-modal-card
+      trap-focus
+      aria-role="dialog"
+      aria-modal
+    >
+      <ModalAddGenre :handleGetAllGenres="handleGetAllGenres" />
+    </b-modal>
+
+    <!-- Modal Edit Genre -->
+    <b-modal
+      :active.sync="showModalEditGenre"
+      has-modal-card
+      trap-focus
+      aria-role="dialog"
+      aria-modal
+    >
+      <ModalEditGenre :handleGetAllGenres="handleGetAllGenres" :selectedGenre="selectedGenre" />
+    </b-modal>
     <b-loading :is-full-page="false" :active.sync="isLoading"></b-loading>
   </div>
 </template>
 
 <script>
+// Components
+import ModalAddGenre from '~/components/modals/genres/Add'
+import ModalEditGenre from '~/components/modals/genres/Edit'
+
 export default {
   name: 'Books-Genres-Page',
   transition: 'fade',
@@ -55,9 +85,16 @@ export default {
       title: 'Administrar Géneros | Granger'
     }
   },
+  components: {
+    ModalAddGenre,
+    ModalEditGenre
+  },
   data() {
     return {
       genres: [],
+      showModalAddGenre: false,
+      showModalEditGenre: false,
+      selectedGenre: null,
       isLoading: false
     }
   },
@@ -107,6 +144,10 @@ export default {
             .finally(() => (this.isLoading = false))
         }
       })
+    },
+    handleShowModalEdit(genre) {
+      this.selectedGenre = genre
+      this.showModalEditGenre = true
     }
   },
   async asyncData({ $axios }) {

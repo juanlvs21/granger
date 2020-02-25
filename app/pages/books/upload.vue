@@ -73,7 +73,7 @@
 
     <!-- Modal Genres -->
     <b-modal :active.sync="showModalGenres" has-modal-card trap-focus aria-role="dialog" aria-modal>
-      <Genres :genres="newBook.genre" />
+      <ModalGenres :genres="newBook.genre" />
     </b-modal>
     <b-loading :is-full-page="false" :active.sync="isLoading"></b-loading>
   </div>
@@ -82,7 +82,7 @@
 <script>
 // Components
 import Notification from '~/components/core/Notification'
-import Genres from '~/components/modals/books/Genres'
+import ModalGenres from '~/components/modals/books/Genres'
 
 export default {
   name: 'Books-Upload-Page',
@@ -95,7 +95,7 @@ export default {
   },
   components: {
     Notification,
-    Genres
+    ModalGenres
   },
   data() {
     return {
