@@ -71,7 +71,7 @@ export default {
       featuredBooks: [],
       whatWeOffer: [
         {
-          title: 'Descarga imediata',
+          title: 'Descarga inmediata',
           subtitle:
             'Instantaneamenta te dejaremos tu pedido en tu correo electrónico',
           icon: 'fas fa-download'
@@ -93,10 +93,10 @@ export default {
     return await $axios
       .$get(`${process.env.URL_SERVER}/api/books`)
       .then(res => {
-        return { 
+        return {
           newBooks: res.data,
           featuredBooks: []
-          }
+        }
       })
   }
 }

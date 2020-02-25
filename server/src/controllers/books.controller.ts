@@ -654,3 +654,56 @@ export const addGenre = async (req: Request, res: Response) => {
     );
   }
 };
+
+export const deleteGenre = async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+
+    if (id.trim() == "")
+      return msgResponse(
+        res,
+        400,
+        "genre/genre-id-is-empty",
+        "Genre id is empty",
+        "El id del género está vacío",
+        null
+      );
+
+    await Genre.deleteOne({ _id: id })
+      .then(resDelete => {
+        console.log(resDelete);
+        // Response
+        msgResponse(
+          res,
+          201,
+          "genre/successfully-removed",
+          "Genre successfully removed",
+          "Género eliminado con éxito",
+          null
+        );
+      })
+      .catch(err => {
+        // Response catch error
+        console.log(err);
+        msgResponse(
+          res,
+          500,
+          "genre/no-deleted",
+          "Genre no deleted",
+          "Género no eliminado",
+          null
+        );
+      });
+  } catch (err) {
+    // Response catch error
+    console.log(err);
+    msgResponse(
+      res,
+      500,
+      "genre/no-deleted",
+      "Genre no deleted",
+      "Género no eliminado",
+      null
+    );
+  }
+};

@@ -12,6 +12,7 @@
           <b-navbar-dropdown label="Libros">
             <b-navbar-item tag="router-link" to="/books">Todos</b-navbar-item>
             <b-navbar-item tag="router-link" to="/books/upload">Nuevo</b-navbar-item>
+            <b-navbar-item tag="router-link" to="/books/genres">Géneros</b-navbar-item>
           </b-navbar-dropdown>
         </template>
         <template v-else>
