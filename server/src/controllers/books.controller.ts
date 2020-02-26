@@ -24,6 +24,18 @@ import sendBook from "../utils/email/templates/sendBook";
 
 export const upload = async (req: Request, res: Response) => {
   try {
+    // Verify that the user is an administrator, otherwise an error returns
+    const user: any = await User.findOne({ _id: req.userId });
+    if (!user.admin)
+      return msgResponse(
+        res,
+        403,
+        "auth/required-permissions",
+        "You do not have permissions to perform this action",
+        "No tienes permisos para realizar esta acción",
+        null
+      );
+
     // Parsing book received
     const BookJSONReceived = JSON.parse(req.body.book);
 
@@ -32,8 +44,8 @@ export const upload = async (req: Request, res: Response) => {
     });
 
     // It is verified that the book does not exist(through the 'slug', that is to say that there are not two books with the same title)
-    if (existBook) {
-      msgResponse(
+    if (existBook)
+      return msgResponse(
         res,
         400,
         "books/the-book-already-exists",
@@ -41,154 +53,151 @@ export const upload = async (req: Request, res: Response) => {
         "El libro ya existe",
         null
       );
-    } else {
-      // It is verified that there is at least one of the files, otherwise the req.files object will be null and will lead to an error
-      if (!req.files)
-        return msgResponse(
-          res,
-          400,
-          "books/cover-pdf-is-required",
-          "The cover of the book and the PDF file are required",
-          "Se requiere la portada del libro y el archivo PDF",
-          null
-        );
-
-      // Otherwise, the object req.files is not null, the respective value is assigned to the constants
-      const cover: any = req.files!.cover;
-      const pdf: any = req.files!.pdf;
-
-      // It is verified that the cover of the book exists
-      if (!cover)
-        return msgResponse(
-          res,
-          400,
-          "books/cover-is-required",
-          "The book cover is required",
-          "La portada del libro es obligatoria",
-          null
-        );
-
-      // It is verified that the pdf file exists
-      if (!pdf)
-        return msgResponse(
-          res,
-          400,
-          "books/pdf-is-required",
-          "PDF file is required",
-          "El archivo PDF es obligatorio",
-          null
-        );
-
-      // It is verified that the cover format is JPG/JPEG/PNG
-      if (cover.mimetype != "image/jpeg" && cover.mimetype != "image/png")
-        return msgResponse(
-          res,
-          400,
-          "books/cover-must-be-jpg-jpeg-png",
-          "The cover must be in JPG/JPEG/PNG format",
-          "La portada debe estar en formato JPG / JPEG / PNG",
-          null
-        );
-
-      // It is verified that the format is PDF
-      if (pdf.mimetype != "application/pdf")
-        return msgResponse(
-          res,
-          400,
-          "books/book-must-be-pdf",
-          "The book must be in PDF format",
-          "El libro debe estar en formato PDF",
-          null
-        );
-
-      // Blank spaces are removed at the beginning and end of the title
-      BookJSONReceived.title = BookJSONReceived.title.trim();
-
-      // Now, it is verified that the fields are not empty
-      if (BookJSONReceived.title == "")
-        return msgResponse(
-          res,
-          400,
-          "books/title-is-empty",
-          "Title is empty",
-          "Titulo se encuentra vacío",
-          null
-        );
-
-      // It is verified that the price, quantity and year are numbers
-      if (
-        isNaN(BookJSONReceived.price) ||
-        isNaN(BookJSONReceived.yearPublication)
-      )
-        return msgResponse(
-          res,
-          400,
-          "books/price-year-must-be-numbers",
-          "The price and year must be numbers",
-          "El precio y el año deben ser números",
-          null
-        );
-
-      // It is verified that the price and quantity are greater than zero
-      if (parseFloat(BookJSONReceived.price) <= 0)
-        return msgResponse(
-          res,
-          400,
-          "books/price-greater-than-zero",
-          "The price must be greater than zero",
-          "El precio debe ser mayor que cero",
-          null
-        );
-
-      // It is verified that the year of publication is less than the current year
-      if (
-        BookJSONReceived.yearPublication &&
-        parseFloat(BookJSONReceived.yearPublication) >= new Date().getFullYear()
-      )
-        return msgResponse(
-          res,
-          400,
-          "books/year-publication-less-current-year",
-          "The year of publication must be less than the current year",
-          "El año de publicación debe ser inferior al año actual",
-          null
-        );
-
-      // If both files exist proceed to prepare the saved in the database
-
-      // After validating the data, if all is well, the strings are converted to numbers
-      BookJSONReceived.price = parseFloat(BookJSONReceived.price);
-      BookJSONReceived.yearPublication = BookJSONReceived.yearPublication
-        ? parseFloat(BookJSONReceived.yearPublication)
-        : 0;
-
-      // Creating new book
-      const datetime = new Date().getTime();
-      const book: IBook = new Book({
-        ...BookJSONReceived,
-        uuid: uuid.v1(),
-        slug: slugify(BookJSONReceived.title),
-        cover: cover.name,
-        pdf: pdf.name
-      });
-
-      // Saving new book
-      const savedBook: IBook = await book.save();
-
-      // Saving files on the server
-      cover.mv(`./dist/uploads/cover/${book.slug}/${cover.name}`);
-      pdf.mv(`./dist/uploads/pdf/${book.slug}/${pdf.name}`);
-
-      // Response
-      msgResponse(
+    // It is verified that there is at least one of the files, otherwise the req.files object will be null and will lead to an error
+    if (!req.files)
+      return msgResponse(
         res,
-        201,
-        "books/saved-successfully",
-        "Book saved successfully",
-        "Libro guardado satisfactoriamente",
-        savedBook.slug
+        400,
+        "books/cover-pdf-is-required",
+        "The cover of the book and the PDF file are required",
+        "Se requiere la portada del libro y el archivo PDF",
+        null
       );
-    }
+
+    // Otherwise, the object req.files is not null, the respective value is assigned to the constants
+    const cover: any = req.files!.cover;
+    const pdf: any = req.files!.pdf;
+
+    // It is verified that the cover of the book exists
+    if (!cover)
+      return msgResponse(
+        res,
+        400,
+        "books/cover-is-required",
+        "The book cover is required",
+        "La portada del libro es obligatoria",
+        null
+      );
+
+    // It is verified that the pdf file exists
+    if (!pdf)
+      return msgResponse(
+        res,
+        400,
+        "books/pdf-is-required",
+        "PDF file is required",
+        "El archivo PDF es obligatorio",
+        null
+      );
+
+    // It is verified that the cover format is JPG/JPEG/PNG
+    if (cover.mimetype != "image/jpeg" && cover.mimetype != "image/png")
+      return msgResponse(
+        res,
+        400,
+        "books/cover-must-be-jpg-jpeg-png",
+        "The cover must be in JPG/JPEG/PNG format",
+        "La portada debe estar en formato JPG / JPEG / PNG",
+        null
+      );
+
+    // It is verified that the format is PDF
+    if (pdf.mimetype != "application/pdf")
+      return msgResponse(
+        res,
+        400,
+        "books/book-must-be-pdf",
+        "The book must be in PDF format",
+        "El libro debe estar en formato PDF",
+        null
+      );
+
+    // Blank spaces are removed at the beginning and end of the title
+    BookJSONReceived.title = BookJSONReceived.title.trim();
+
+    // Now, it is verified that the fields are not empty
+    if (BookJSONReceived.title == "")
+      return msgResponse(
+        res,
+        400,
+        "books/title-is-empty",
+        "Title is empty",
+        "Titulo se encuentra vacío",
+        null
+      );
+
+    // It is verified that the price, quantity and year are numbers
+    if (
+      isNaN(BookJSONReceived.price) ||
+      isNaN(BookJSONReceived.yearPublication)
+    )
+      return msgResponse(
+        res,
+        400,
+        "books/price-year-must-be-numbers",
+        "The price and year must be numbers",
+        "El precio y el año deben ser números",
+        null
+      );
+
+    // It is verified that the price and quantity are greater than zero
+    if (parseFloat(BookJSONReceived.price) <= 0)
+      return msgResponse(
+        res,
+        400,
+        "books/price-greater-than-zero",
+        "The price must be greater than zero",
+        "El precio debe ser mayor que cero",
+        null
+      );
+
+    // It is verified that the year of publication is less than the current year
+    if (
+      BookJSONReceived.yearPublication &&
+      parseFloat(BookJSONReceived.yearPublication) >= new Date().getFullYear()
+    )
+      return msgResponse(
+        res,
+        400,
+        "books/year-publication-less-current-year",
+        "The year of publication must be less than the current year",
+        "El año de publicación debe ser inferior al año actual",
+        null
+      );
+
+    // If both files exist proceed to prepare the saved in the database
+
+    // After validating the data, if all is well, the strings are converted to numbers
+    BookJSONReceived.price = parseFloat(BookJSONReceived.price);
+    BookJSONReceived.yearPublication = BookJSONReceived.yearPublication
+      ? parseFloat(BookJSONReceived.yearPublication)
+      : 0;
+
+    // Creating new book
+    const book: IBook = new Book({
+      ...BookJSONReceived,
+      uuid: uuid.v1(),
+      slug: slugify(BookJSONReceived.title),
+      cover: cover.name,
+      pdf: pdf.name
+    });
+
+    // Saving new book
+    const savedBook: IBook = await book.save();
+
+    // Saving files on the server
+    cover.mv(`./dist/uploads/cover/${book.slug}/${cover.name}`);
+    pdf.mv(`./dist/uploads/pdf/${book.slug}/${pdf.name}`);
+
+    // Response
+    msgResponse(
+      res,
+      201,
+      "books/saved-successfully",
+      "Book saved successfully",
+      "Libro guardado satisfactoriamente",
+      savedBook.slug
+    );
   } catch (err) {
     // Response catch
     msgResponse(
@@ -345,7 +354,7 @@ export const paymentSucceeded = async (req: Request, res: Response) => {
         } else {
           msgResponse(
             res,
-            400,
+            402,
             "books/requires-payment-method",
             "Requires payment method",
             "Requiere método de pago",

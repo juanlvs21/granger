@@ -8,11 +8,12 @@
 
     <div class="granger__book-card-details">
       <button
+        v-if="session"
         class="granger__book-card-details-btn-fav"
         data-title="Añadir a Favoritos"
         @mouseover="favOver = true"
         @mouseleave="favOver = false"
-        @click="handleFavorite"
+        @click="handleAddFavorite"
       >
         <i v-if="favOver" class="fas fa-heart"></i>
         <i v-else class="far fa-heart"></i>
@@ -48,8 +49,13 @@ export default {
       favOver: false
     }
   },
+  computed: {
+    session() {
+      return this.$store.state.user
+    }
+  },
   methods: {
-    async handleFavorite() {
+    async handleAddFavorite() {
       await alert('Pronto :c')
     }
   }
@@ -109,6 +115,7 @@ export default {
       font-size: 20px;
       opacity: 0;
       transition: all 300ms ease-in;
+      cursor: pointer;
     }
 
     .granger__book-card-details-btn-fav::before {

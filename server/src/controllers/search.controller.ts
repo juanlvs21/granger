@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 
 // Models
 import Book from "../models/book.model";
-import Genre from "../models/genre.mode";
+import Genre from "../models/genre.model";
 
 // Interface
 import IBook from "../interfaces/IBook";

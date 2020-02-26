@@ -82,7 +82,7 @@ export const signup = async (req: Request, res: Response) => {
       firstName: savedUser.firstName,
       lastName: savedUser.lastName,
       admin: savedUser.admin,
-      created_date: savedUser.created_date,
+      favorites: savedUser.favorites,
       token
     };
 
@@ -173,7 +173,7 @@ export const signin = async (req: Request, res: Response) => {
       firstName: user.firstName,
       lastName: user.lastName,
       admin: user.admin,
-      created_date: user.created_date,
+      favorites: user.favorites,
       token
     };
 
@@ -224,7 +224,7 @@ export const token = async (req: Request, res: Response) => {
       firstName: user.firstName,
       lastName: user.lastName,
       admin: user.admin,
-      created_date: user.created_date,
+      favorites: user.favorites,
       token: newToken
     };
 

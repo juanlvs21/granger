@@ -149,8 +149,10 @@ export default {
           this.$router.push(`/books/${data}`)
         })
         .catch(err => {
+          console.log(err.response.data)
           if (
             err.response.data.code === 'auth/authentication-required' ||
+            err.response.data.code === 'auth/required-permissions' ||
             err.response.data.code === 'books/the-book-already-exists' ||
             err.response.data.code === 'books/cover-pdf-is-required' ||
             err.response.data.code === 'books/cover-is-required' ||

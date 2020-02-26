@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 
 // Models
-import Genre from "../models/genre.mode";
+import Genre from "../models/genre.model";
+import User from "../models/user.model";
 
 // Interface
 import IGenre from "../interfaces/IGenre";
@@ -37,7 +38,18 @@ export const getAllGenre = async (req: Request, res: Response) => {
 
 export const addGenre = async (req: Request, res: Response) => {
   try {
-    console.log(req.userId);
+    // Verify that the user is an administrator, otherwise an error returns
+    const user: any = await User.findOne({ _id: req.userId });
+    if (!user.admin)
+      return msgResponse(
+        res,
+        403,
+        "auth/required-permissions",
+        "You do not have permissions to perform this action",
+        "No tienes permisos para realizar esta acción",
+        null
+      );
+
     const { genre } = req.body;
 
     // Creating new genre
@@ -73,6 +85,18 @@ export const addGenre = async (req: Request, res: Response) => {
 
 export const updateGenre = async (req: Request, res: Response) => {
   try {
+    // Verify that the user is an administrator, otherwise an error returns
+    const user: any = await User.findOne({ _id: req.userId });
+    if (!user.admin)
+      return msgResponse(
+        res,
+        403,
+        "auth/required-permissions",
+        "You do not have permissions to perform this action",
+        "No tienes permisos para realizar esta acción",
+        null
+      );
+
     const { _id, genre } = req.body;
 
     const existGenre = await Genre.findOne({ _id });
@@ -114,6 +138,18 @@ export const updateGenre = async (req: Request, res: Response) => {
 
 export const deleteGenre = async (req: Request, res: Response) => {
   try {
+    // Verify that the user is an administrator, otherwise an error returns
+    const user: any = await User.findOne({ _id: req.userId });
+    if (!user.admin)
+      return msgResponse(
+        res,
+        403,
+        "auth/required-permissions",
+        "You do not have permissions to perform this action",
+        "No tienes permisos para realizar esta acción",
+        null
+      );
+
     const id = req.params.id;
 
     if (id.trim() == "")
