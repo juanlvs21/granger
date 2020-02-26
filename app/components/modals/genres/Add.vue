@@ -52,7 +52,7 @@ export default {
       } else {
         await this.$axios
           .$post(
-            `${process.env.URL_SERVER}/api/books/genre`,
+            `${process.env.URL_SERVER}/api/genres`,
             { genre: this.genre },
             {
               headers: {

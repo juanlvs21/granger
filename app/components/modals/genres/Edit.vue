@@ -54,7 +54,7 @@ export default {
         setTimeout(() => (this.error = null), 5000)
       } else {
         await this.$axios
-          .$put(`${process.env.URL_SERVER}/api/books/genre`, this.genre, {
+          .$put(`${process.env.URL_SERVER}/api/genres`, this.genre, {
             headers: {
               authorization: this.$store.state.user.token
             }

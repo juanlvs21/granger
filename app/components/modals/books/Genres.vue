@@ -20,9 +20,7 @@
                 v-for="(genre, i) in allGenres"
                 :key="i"
                 @click="handleAdd(genre.genre)"
-              >
-                {{ genre.genre }}
-              </span>
+              >{{ genre.genre }}</span>
             </div>
           </div>
         </div>
@@ -32,18 +30,12 @@
               <b-field>
                 <b-input placeholder="Género" v-model="newGenre"></b-input>
                 <p class="control">
-                  <b-button
-                    type="is-primary"
-                    :loading="isLoading"
-                    native-type="submit"
-                  >
-                    Nuevo
-                  </b-button>
+                  <b-button type="is-primary" :loading="isLoading" native-type="submit">Nuevo</b-button>
                 </p>
               </b-field>
 
               <!-- Error -->
-              <Notification  v-if="error" type="is-danger" :message="error" />
+              <Notification v-if="error" type="is-danger" :message="error" />
             </form>
           </div>
         </div>
@@ -66,17 +58,13 @@
                 v-for="(genre, i) in genres"
                 :key="i"
                 @click="handleRemove(genre)"
-              >
-                {{ genre }}
-              </span>
+              >{{ genre }}</span>
             </div>
           </div>
         </div>
       </section>
       <footer class="modal-card-foot">
-        <button class="button" type="button" @click="$parent.close()">
-          Aceptar
-        </button>
+        <button class="button" type="button" @click="$parent.close()">Aceptar</button>
       </footer>
       <b-loading :is-full-page="false" :active.sync="isLoading"></b-loading>
     </div>
@@ -98,7 +86,7 @@ export default {
       allGenres: [],
       newGenre: '',
       isLoading: false,
-      error: null,
+      error: null
     }
   },
   methods: {
@@ -106,7 +94,7 @@ export default {
       this.isLoading = true
 
       await this.$axios
-        .$get(`${process.env.URL_SERVER}/api/books/genre`)
+        .$get(`${process.env.URL_SERVER}/api/genres`)
         .then(({ data }) => {
           this.allGenres = data
         })
@@ -115,30 +103,29 @@ export default {
     },
     async handleSubmit() {
       this.isLoading = true
-     
+
       if (this.newGenre.trim() === '') {
         this.isLoading = false
-        this.error = "El campo está vacio"
-        setTimeout(() => this.error = null , 5000);
+        this.error = 'El campo está vacio'
+        setTimeout(() => (this.error = null), 5000)
       } else {
         await this.$axios
-        .$post(
-          `${process.env.URL_SERVER}/api/books/genre`,
-          { genre: this.newGenre },
-          {
-            headers: {
-              authorization: this.$store.state.user.token
+          .$post(
+            `${process.env.URL_SERVER}/api/genres`,
+            { genre: this.newGenre },
+            {
+              headers: {
+                authorization: this.$store.state.user.token
+              }
             }
-          }
-        )
-        .then(res => {
-          this.newGenre = ''
-          this.handleGetAllGenres()
-        })
-        .catch(err => console.log(err))
-        .finally(() => (this.isLoading = false))
+          )
+          .then(res => {
+            this.newGenre = ''
+            this.handleGetAllGenres()
+          })
+          .catch(err => console.log(err))
+          .finally(() => (this.isLoading = false))
       }
-      
     },
     handleAdd(genre) {
       const newGenresSelecte = this.genres

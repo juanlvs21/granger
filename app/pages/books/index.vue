@@ -146,7 +146,7 @@ export default {
       }
 
       await this.$axios
-        .$get(`${process.env.URL_SERVER}/api/books/search/${filter}/${data}`)
+        .$get(`${process.env.URL_SERVER}/api/search/${filter}/${data}`)
         .then(({ data }) => {
           if (data.length === 0) {
             this.error.books = 'Resultados no encontrados'
@@ -184,7 +184,7 @@ export default {
     try {
       const getBooks = await $axios.$get(`${process.env.URL_SERVER}/api/books`)
       const getGenres = await $axios.$get(
-        `${process.env.URL_SERVER}/api/books/genre`
+        `${process.env.URL_SERVER}/api/genres`
       )
 
       let error = {
@@ -194,7 +194,7 @@ export default {
 
       if (getBooks.data.length === 0) {
         error.books = 'No hay libros disponibles'
-      } 
+      }
 
       return {
         genres: getGenres.data,

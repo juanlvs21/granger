@@ -107,7 +107,7 @@ export default {
     async handleGetAllGenres() {
       this.isLoading = true
       await this.$axios
-        .$get(`${process.env.URL_SERVER}/api/books/genre`)
+        .$get(`${process.env.URL_SERVER}/api/genres`)
         .then(({ data }) => {
           this.genres = data
         })
@@ -123,7 +123,7 @@ export default {
         confirmText: 'Eliminar',
         onConfirm: async () => {
           await this.$axios
-            .$delete(`${process.env.URL_SERVER}/api/books/genre/${_id}`, {
+            .$delete(`${process.env.URL_SERVER}/api/genres/${_id}`, {
               headers: {
                 authorization: this.session.token
               }
@@ -152,9 +152,7 @@ export default {
   },
   async asyncData({ $axios }) {
     try {
-      const genres = await $axios.$get(
-        `${process.env.URL_SERVER}/api/books/genre`
-      )
+      const genres = await $axios.$get(`${process.env.URL_SERVER}/api/genres`)
 
       return {
         genres: genres.data
