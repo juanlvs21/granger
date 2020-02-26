@@ -1,8 +1,34 @@
 <template>
   <div class="granger__book-container">
-    <div class="container">
+    <div class="container has-text-centered granger__book-not-found" v-if="error">
+      <!-- Error -->
+      <img src="/images/book-not-found.webp" alt="Book not found" />
+      <h1 class="is-size-1">¡OOPS!</h1>
+      <h2 class="is-size-2">Libro no encontrado</h2>
+      <div class="granger__book-not-found-btn-container">
+        <b-button tag="nuxt-link" to="/" type="is-info">Ir al inicio</b-button>
+        <b-button tag="nuxt-link" to="/books" type="is-primary">Ver todos los libros</b-button>
+      </div>
+    </div>
+    <div class="container" v-else>
       <div class="granger__book-title-container">
         <h1 class="is-size-3">{{ book.title }}</h1>
+        <div class="granger__book-admin-btn-container" v-if="session && session.admin">
+          <b-button type="is-info" size="is-small" outlined>
+            Editar
+            <i class="fas fa-edit"></i>
+          </b-button>
+          <b-button
+            type="is-danger"
+            size="is-small"
+            outlined
+            :loading="isLoading"
+            @click="handleDelete"
+          >
+            Eliminar
+            <i class="fas fa-trash"></i>
+          </b-button>
+        </div>
       </div>
       <div class="columns">
         <div class="column is-6 granger__book-cover-container">
@@ -61,6 +87,7 @@
 
 <script>
 // Components
+import Notification from '~/components/core/Notification'
 import Newsletter from '~/components/home/Newsletter'
 import Stars from '~/components/books/Stars'
 import ModalConfirmPayment from '~/components/modals/books/ConfirmPayment'
@@ -70,10 +97,11 @@ export default {
   transition: 'fade',
   head() {
     return {
-      title: `${this.book.title} | Granger`
+      title: `${this.title} | Granger`
     }
   },
   components: {
+    Notification,
     Newsletter,
     Stars,
     ModalConfirmPayment
@@ -92,6 +120,9 @@ export default {
   computed: {
     session() {
       return this.$store.state.user
+    },
+    title() {
+      return this.book ? this.book.title : 'Libro no encontrado'
     }
   },
   methods: {
@@ -121,6 +152,45 @@ export default {
           console.log(err)
         })
         .finally(() => (this.isLoading = false))
+    },
+    handleDelete() {
+      this.$buefy.dialog.confirm({
+        message: `¿Desea Eliminar este libro?`,
+        cancelText: 'Cancelar',
+        confirmText: 'Eliminar',
+        onConfirm: async () => {
+          this.isLoading = true
+          await this.$axios
+            .$delete(`${process.env.URL_SERVER}/api/books/${this.book.uuid}`, {
+              headers: {
+                authorization: this.session.token
+              }
+            })
+            .then(res => {
+              this.$buefy.toast.open({
+                duration: 3000,
+                message: `Libro eliminador con satisfactoriamente`,
+                position: 'is-bottom-right'
+              })
+
+              this.$router.replace('/books')
+            })
+            .catch(err => {
+              console.log(err)
+            })
+            .finally(() => (this.isLoading = false))
+        }
+      })
+    },
+    async getBook() {
+      this.isLoading = true
+
+      await this.$axios
+        .get(`${process.env.URL_SERVER}/api/books/slug/${params.slug}`)
+        .then(({ data }) => {
+          this.book = data
+        })
+        .finally(() => (this.isLoading = false))
     }
   },
   async asyncData({ $axios, params }) {
@@ -129,12 +199,35 @@ export default {
       .then(res => {
         return { book: res.data }
       })
+      .catch(err => {
+        if (err.response.data.code === 'books/does-not-exist') {
+          return { error: err.response.data.message.es }
+        } else {
+          return { error: 'Error desconocido, intente de nuevo' }
+        }
+      })
   }
 }
 </script>
 
 <style lang="scss">
 .granger__book-container {
+  .granger__book-not-found {
+    h2 {
+      margin-bottom: 20px;
+    }
+
+    .granger__book-not-found-btn-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      .button {
+        width: 200px;
+        margin: 10px 0px;
+      }
+    }
+  }
+
   .granger__book-stars-container {
     font-size: 24px;
 
@@ -152,6 +245,15 @@ export default {
   .granger__book-title-container {
     margin-bottom: 30px;
     text-align: center;
+
+    .granger__book-admin-btn-container {
+      margin-top: 10px;
+
+      .button {
+        margin: 0 2px;
+        width: 100px;
+      }
+    }
   }
 
   .granger__book-cover-container {
@@ -211,6 +313,10 @@ export default {
       .tags {
         display: flex;
         justify-content: center;
+      }
+
+      .granger__book-buy {
+        text-align: center;
       }
     }
   }

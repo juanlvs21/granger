@@ -122,6 +122,7 @@ export default {
         cancelText: 'Cancelar',
         confirmText: 'Eliminar',
         onConfirm: async () => {
+          this.isLoading = true
           await this.$axios
             .$delete(`${process.env.URL_SERVER}/api/genres/${_id}`, {
               headers: {
@@ -134,6 +135,7 @@ export default {
               this.handleGetAllGenres()
 
               this.$buefy.toast.open({
+                duration: 3000,
                 message: `Género <b><i>${genre}</i></b> eliminado exitosamente`,
                 position: 'is-bottom-right'
               })

@@ -62,6 +62,11 @@ export default {
           )
           .then(res => {
             this.genre = ''
+            this.$buefy.toast.open({
+              duration: 3000,
+              message: `Género agregado exitosamente`,
+              position: 'is-bottom-right'
+            })
             this.handleGetAllGenres()
             this.$parent.close()
           })

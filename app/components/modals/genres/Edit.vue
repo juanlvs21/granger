@@ -61,6 +61,11 @@ export default {
           })
           .then(res => {
             console.log(res)
+            this.$buefy.toast.open({
+              duration: 3000,
+              message: `Género actualizado exitosamente`,
+              position: 'is-bottom-right'
+            })
             this.handleGetAllGenres()
             this.$parent.close()
           })

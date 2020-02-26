@@ -22,10 +22,15 @@
           </div>
           <div class="column">
             <b-field label="Precio ($)">
-              <b-numberinput placeholder="Precio ($)" v-model="newBook.price" required></b-numberinput>
+              <b-numberinput
+                placeholder="Precio ($)"
+                v-model.number="newBook.price"
+                min="0"
+                required
+              ></b-numberinput>
             </b-field>
             <b-field label="Año de publicación">
-              <b-input placeholder="Año de publicación" v-model="newBook.yearPublication"></b-input>
+              <b-input placeholder="Año de publicación" v-model.number="newBook.yearPublication"></b-input>
             </b-field>
           </div>
         </div>
@@ -143,6 +148,7 @@ export default {
         })
         .then(({ data }) => {
           this.$buefy.toast.open({
+            duration: 3000,
             message: 'Libro registrado satisfactoriamente',
             position: 'is-bottom-right'
           })
@@ -173,6 +179,9 @@ export default {
           }
         })
         .finally(() => (this.isLoading = false))
+    },
+    handleChangePrice(e) {
+      console.log(e)
     }
   }
 }

@@ -1,4 +1,6 @@
 import { Request, Response } from "express";
+import path from "path";
+import fs from "fs-extra";
 import slugify from "slugify";
 import uuid from "uuid";
 
@@ -206,6 +208,86 @@ export const upload = async (req: Request, res: Response) => {
       "books/unsaved",
       "Unsaved book, try again",
       "Libro no guardado, intente de nuevo",
+      null
+    );
+  }
+};
+
+export const deleteBook = async (req: Request, res: Response) => {
+  try {
+    // Verify that the user is an administrator, otherwise an error returns
+    const user: any = await User.findOne({ _id: req.userId });
+    if (!user.admin)
+      return msgResponse(
+        res,
+        403,
+        "auth/required-permissions",
+        "You do not have permissions to perform this action",
+        "No tienes permisos para realizar esta acción",
+        null
+      );
+
+    const uuid = req.params.uuid;
+
+    if (uuid.trim() == "")
+      return msgResponse(
+        res,
+        400,
+        "book/uuid-is-empty",
+        "Book uuid is empty",
+        "El uuid del género está vacío",
+        null
+      );
+
+    const book = await Book.findOne({ uuid });
+
+    // If the book does not exist
+    if (!book)
+      return msgResponse(
+        res,
+        400,
+        "books/not-found",
+        "Book not found",
+        "Libro no encontrado",
+        null
+      );
+
+    fs.removeSync(path.resolve(__dirname, "../", `uploads/cover/${book.slug}`));
+    fs.removeSync(path.resolve(__dirname, "../", `uploads/pdf/${book.slug}`));
+
+    await Book.deleteOne({ uuid })
+      .then(resDelete => {
+        // Response
+        msgResponse(
+          res,
+          201,
+          "books/successfully-removed",
+          "Book successfully removed",
+          "Libro eliminado con éxito",
+          null
+        );
+      })
+      .catch(err => {
+        // Response catch error
+        console.log(err);
+        msgResponse(
+          res,
+          500,
+          "book/no-deleted",
+          "Book no deleted",
+          "Libro no eliminado",
+          null
+        );
+      });
+  } catch (err) {
+    // Response catch
+    console.log(err);
+    msgResponse(
+      res,
+      500,
+      "books/not-deleted",
+      "Book not deleted",
+      "Libro no eliminado",
       null
     );
   }
