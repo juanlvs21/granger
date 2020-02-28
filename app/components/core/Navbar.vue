@@ -23,7 +23,7 @@
       <template slot="end">
         <template v-if="session">
           <b-navbar-dropdown :label="session.firstName">
-            <b-navbar-item href="#">Perfil</b-navbar-item>
+            <b-navbar-item tag="router-link" to="/profile">Perfil</b-navbar-item>
             <b-navbar-item @click="handleLogout">Salir</b-navbar-item>
           </b-navbar-dropdown>
         </template>

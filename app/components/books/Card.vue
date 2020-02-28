@@ -7,17 +7,29 @@
     />
 
     <div class="granger__book-card-details">
-      <button
-        v-if="session"
-        class="granger__book-card-details-btn-fav"
-        data-title="Añadir a Favoritos"
-        @mouseover="favOver = true"
-        @mouseleave="favOver = false"
-        @click="handleAddFavorite"
-      >
-        <i v-if="favOver" class="fas fa-heart"></i>
-        <i v-else class="far fa-heart"></i>
-      </button>
+      <template v-if="session">
+        <button
+          v-if="isFavorite"
+          class="granger__book-card-details-btn-fav"
+          data-title="Eliminar de Favoritos"
+          @mouseover="favOver = true"
+          @mouseleave="favOver = false"
+          @click="handleRemoveFavorite"
+        >
+          <i class="fas fa-heart-broken"></i>
+        </button>
+        <button
+          v-else
+          class="granger__book-card-details-btn-fav"
+          data-title="Añadir a Favoritos"
+          @mouseover="favOver = true"
+          @mouseleave="favOver = false"
+          @click="handleAddFavorite"
+        >
+          <i v-if="favOver" class="fas fa-heart"></i>
+          <i v-else class="far fa-heart"></i>
+        </button>
+      </template>
 
       <p class="granger__book-card-details-title">{{ book.title }}</p>
 
@@ -30,6 +42,7 @@
       </p>
       <nuxt-link :to="`/books/${book.slug}`" class="button is-small is-primary is-rounded">Ver más</nuxt-link>
     </div>
+    <b-loading :is-full-page="false" :active.sync="isLoading"></b-loading>
   </div>
 </template>
 
@@ -46,17 +59,104 @@ export default {
   data() {
     return {
       server: process.env.URL_SERVER,
-      favOver: false
+      favOver: false,
+      isLoading: false
     }
   },
   computed: {
     session() {
       return this.$store.state.user
+    },
+    isFavorite() {
+      // Returns 1 if it exists in the favorites list and 0 if not
+      return this.session.favorites.filter(favorite =>
+        favorite.uuid === this.book.uuid ? true : false
+      ).length
     }
   },
   methods: {
-    async handleAddFavorite() {
-      await alert('Pronto :c')
+    handleAddFavorite() {
+      this.$buefy.dialog.confirm({
+        message: `¿Agregar a favoritos?`,
+        cancelText: 'Cancelar',
+        confirmText: 'Agregar',
+        onConfirm: async () => {
+          this.isLoading = true
+          const data = {
+            user_uuid: this.session.uuid,
+            book_uuid: this.book.uuid
+          }
+
+          await this.$axios
+            .$post(`${process.env.URL_SERVER}/api/user/favorites/add`, data, {
+              headers: {
+                authorization: this.$store.state.user.token
+              }
+            })
+            .then(async res => {
+              await this.$axios
+                .post(`${process.env.URL_SERVER}/api/auth/token`, {
+                  token: this.session.token
+                })
+                .then(({ data }) => {
+                  this.$store.dispatch('logInAction', data.data)
+                  this.$buefy.toast.open({
+                    duration: 3000,
+                    message: 'Libro agregado a favoritos',
+                    position: 'is-bottom-right'
+                  })
+                })
+            })
+            .catch(err => {
+              console.log(err)
+            })
+            .finally(() => (this.isLoading = false))
+        }
+      })
+    },
+    handleRemoveFavorite() {
+      this.$buefy.dialog.confirm({
+        message: `¿Eliminar de favoritos?`,
+        cancelText: 'Cancelar',
+        confirmText: 'Eliminar',
+        onConfirm: async () => {
+          this.isLoading = true
+          const data = {
+            user_uuid: this.session.uuid,
+            book_uuid: this.book.uuid
+          }
+
+          await this.$axios
+            .$post(
+              `${process.env.URL_SERVER}/api/user/favorites/remove`,
+              data,
+              {
+                headers: {
+                  authorization: this.$store.state.user.token
+                }
+              }
+            )
+            .then(async res => {
+              await this.$axios
+                .post(`${process.env.URL_SERVER}/api/auth/token`, {
+                  token: this.session.token
+                })
+                .then(({ data }) => {
+                  this.$store.dispatch('logInAction', data.data)
+                  this.$buefy.toast.open({
+                    duration: 3000,
+                    message: 'Libro eliminado de favoritos',
+                    position: 'is-bottom-right'
+                  })
+                  this.isOpenFavorites = 1
+                })
+            })
+            .catch(err => {
+              console.log(err)
+            })
+            .finally(() => (this.isLoading = false))
+        }
+      })
     }
   }
 }
@@ -139,6 +239,10 @@ export default {
       color: var(--primary);
     }
 
+    .granger__book-card-details-btn-fav:focus {
+      outline: none;
+    }
+
     .granger__book-card-details-title {
       color: white;
       text-align: center;
@@ -166,6 +270,10 @@ export default {
       background-color: var(--info);
     }
   }
+}
+
+.granger__book-card:focus {
+  outline: none;
 }
 
 .granger__book-card:hover {

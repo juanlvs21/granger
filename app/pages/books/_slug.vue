@@ -52,6 +52,7 @@
 
             <div class="granger__book-buy" v-if="session">
               <b-button type="is-primary" rounded @click="handlePaymentIntent">Comprar Libro</b-button>
+              <b-button type="is-ligth" rounded @click="handlePaymentIntent">Añadir a Favoritos</b-button>
             </div>
 
             <p>
@@ -233,6 +234,12 @@ export default {
 
     i {
       margin-right: 5px;
+    }
+  }
+
+  .granger__book-buy {
+    .button {
+      width: 180px;
     }
   }
 }
