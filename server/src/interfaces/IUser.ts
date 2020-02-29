@@ -12,7 +12,6 @@ export default interface IUser extends Document {
   firstName: string;
   lastName: string;
   admin: boolean;
-  favorites?: [IBook];
   created_date: string;
   encryptPassword(password: string): Promise<string>;
   validatePassword(password: string): Promise<boolean>;

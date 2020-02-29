@@ -12,8 +12,7 @@ const userSchema = new Schema({
   password: { type: String, required: true, min: 6 },
   firstName: { type: String },
   lastName: { type: String },
-  admin: { type: Boolean, required: true, default: true },
-  favorites: { type: [{}], default: [] },
+  admin: { type: Boolean, required: true, default: false },
   created_date: {
     type: String,
     required: true,

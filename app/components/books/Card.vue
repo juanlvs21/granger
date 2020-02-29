@@ -33,7 +33,7 @@
 
       <p class="granger__book-card-details-title">{{ book.title }}</p>
 
-      <Stars :stars="book.stars" />
+      <!-- <Stars :stars="book.stars" /> -->
 
       <p class="granger__book-card-details-price">$ {{ book.price }}</p>
 
@@ -69,8 +69,8 @@ export default {
     },
     isFavorite() {
       // Returns 1 if it exists in the favorites list and 0 if not
-      return this.session.favorites.filter(favorite =>
-        favorite.uuid === this.book.uuid ? true : false
+      return this.$store.state.favorites.filter(favorite =>
+        favorite.book_uuid === this.book.uuid ? true : false
       ).length
     }
   },
@@ -82,32 +82,21 @@ export default {
         confirmText: 'Agregar',
         onConfirm: async () => {
           this.isLoading = true
-          const data = {
-            user_uuid: this.session.uuid,
-            book_uuid: this.book.uuid
-          }
-
           await this.$axios
-            .$post(`${process.env.URL_SERVER}/api/favorites/add`, data, {
-              headers: {
-                authorization: this.$store.state.user.token
+            .$post(
+              `${process.env.URL_SERVER}/api/favorites/add`,
+              { book_uuid: this.book.uuid },
+              {
+                headers: {
+                  authorization: this.$store.state.user.token
+                }
               }
-            })
-            .then(async res => {
-              await this.$axios
-                .post(`${process.env.URL_SERVER}/api/auth/token`, {
-                  token: this.session.token
-                })
-                .then(({ data }) => {
-                  this.$store.dispatch('logInAction', data.data)
-                  this.$buefy.toast.open({
-                    duration: 3000,
-                    message: 'Libro agregado a favoritos',
-                    position: 'is-bottom-right'
-                  })
-                })
+            )
+            .then(({ data }) => {
+              this.$store.dispatch('setFavoritesAction', data)
             })
             .catch(err => {
+              console.log(err.response.data)
               console.log(err)
             })
             .finally(() => (this.isLoading = false))
@@ -121,35 +110,19 @@ export default {
         confirmText: 'Eliminar',
         onConfirm: async () => {
           this.isLoading = true
-          const data = {
-            user_uuid: this.session.uuid,
-            book_uuid: this.book.uuid
-          }
 
           await this.$axios
             .$post(
-              `${process.env.URL_SERVER}/api/user/favorites/remove`,
-              data,
+              `${process.env.URL_SERVER}/api/favorites/remove`,
+              { book_uuid: this.book.uuid },
               {
                 headers: {
                   authorization: this.$store.state.user.token
                 }
               }
             )
-            .then(async res => {
-              await this.$axios
-                .post(`${process.env.URL_SERVER}/api/auth/token`, {
-                  token: this.session.token
-                })
-                .then(({ data }) => {
-                  this.$store.dispatch('logInAction', data.data)
-                  this.$buefy.toast.open({
-                    duration: 3000,
-                    message: 'Libro eliminado de favoritos',
-                    position: 'is-bottom-right'
-                  })
-                  this.isOpenFavorites = 1
-                })
+            .then(({ data }) => {
+              this.$store.dispatch('setFavoritesAction', data)
             })
             .catch(err => {
               console.log(err)

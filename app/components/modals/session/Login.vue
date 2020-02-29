@@ -57,8 +57,9 @@ export default {
       await this.$axios
         .$post(`${process.env.URL_SERVER}/api/auth/signin`, this.user)
         .then(({ data }) => {
-          this.$store.dispatch('logInAction', data)
-          this.$cookies.set('token', data.token)
+          this.$store.dispatch('logInAction', data.user)
+          this.$store.dispatch('setFavoritesAction', data.favorites)
+          this.$cookies.set('token', data.user.token)
           this.$parent.close()
           if (this.$route.path === '/auth/signup') {
             this.$router.replace('/')

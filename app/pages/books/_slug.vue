@@ -40,9 +40,9 @@
         </div>
         <div class="column is-6">
           <div class="granger__book-details-container">
-            <div class="granger__book-stars-container">
+            <!-- <div class="granger__book-stars-container">
               <Stars :stars="book.stars" />
-            </div>
+            </div>-->
 
             <p class="is-size-1 has-text-info granger__book-price">$ {{ book.price }}</p>
 
@@ -52,7 +52,18 @@
 
             <div class="granger__book-buy" v-if="session">
               <b-button type="is-primary" rounded @click="handlePaymentIntent">Comprar Libro</b-button>
-              <b-button type="is-ligth" rounded @click="handlePaymentIntent">Añadir a Favoritos</b-button>
+              <b-button
+                v-if="isFavorite"
+                type="is-ligth"
+                rounded
+                @click="handleRemoveFavorite"
+              >Eliminar de Favoritos</b-button>
+              <b-button
+                v-else
+                type="is-ligth"
+                rounded
+                @click="handleAddFavorite"
+              >Agregar a Favoritos</b-button>
             </div>
 
             <p>
@@ -124,6 +135,12 @@ export default {
     },
     title() {
       return this.book ? this.book.title : 'Libro no encontrado'
+    },
+    isFavorite() {
+      // Returns 1 if it exists in the favorites list and 0 if not
+      return this.$store.state.favorites.filter(favorite =>
+        favorite.book_uuid === this.book.uuid ? true : false
+      ).length
     }
   },
   methods: {
@@ -192,6 +209,62 @@ export default {
           this.book = data
         })
         .finally(() => (this.isLoading = false))
+    },
+    handleAddFavorite() {
+      this.$buefy.dialog.confirm({
+        message: `¿Agregar a favoritos?`,
+        cancelText: 'Cancelar',
+        confirmText: 'Agregar',
+        onConfirm: async () => {
+          this.isLoading = true
+          await this.$axios
+            .$post(
+              `${process.env.URL_SERVER}/api/favorites/add`,
+              { book_uuid: this.book.uuid },
+              {
+                headers: {
+                  authorization: this.$store.state.user.token
+                }
+              }
+            )
+            .then(({ data }) => {
+              this.$store.dispatch('setFavoritesAction', data)
+            })
+            .catch(err => {
+              console.log(err.response.data)
+              console.log(err)
+            })
+            .finally(() => (this.isLoading = false))
+        }
+      })
+    },
+    handleRemoveFavorite() {
+      this.$buefy.dialog.confirm({
+        message: `¿Eliminar de favoritos?`,
+        cancelText: 'Cancelar',
+        confirmText: 'Eliminar',
+        onConfirm: async () => {
+          this.isLoading = true
+
+          await this.$axios
+            .$post(
+              `${process.env.URL_SERVER}/api/favorites/remove`,
+              { book_uuid: this.book.uuid },
+              {
+                headers: {
+                  authorization: this.$store.state.user.token
+                }
+              }
+            )
+            .then(({ data }) => {
+              this.$store.dispatch('setFavoritesAction', data)
+            })
+            .catch(err => {
+              console.log(err)
+            })
+            .finally(() => (this.isLoading = false))
+        }
+      })
     }
   },
   async asyncData({ $axios, params }) {

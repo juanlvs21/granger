@@ -4,35 +4,15 @@
       <div class="card">
         <div class="card-content">
           <b-field label="Nombre">
-            <b-input
-              placeholder="Nombre"
-              v-model="newUser.firstName"
-              required
-            ></b-input>
+            <b-input placeholder="Nombre" v-model="newUser.firstName" required></b-input>
           </b-field>
           <b-field label="Apellido">
-            <b-input
-              placeholder="Apellido"
-              v-model="newUser.lastName"
-              required
-            ></b-input>
+            <b-input placeholder="Apellido" v-model="newUser.lastName" required></b-input>
           </b-field>
-          <b-field
-            label="Correo Electrónico"
-            :type="userExists ? 'is-danger' : null"
-          >
-            <b-input
-              type="email"
-              placeholder="Correo Electrónico"
-              v-model="newUser.email"
-              required
-            >
-            </b-input>
+          <b-field label="Correo Electrónico" :type="userExists ? 'is-danger' : null">
+            <b-input type="email" placeholder="Correo Electrónico" v-model="newUser.email" required></b-input>
           </b-field>
-          <b-field
-            label="Contraseña"
-            :type="passwordNotMatch ? 'is-warning' : null"
-          >
+          <b-field label="Contraseña" :type="passwordNotMatch ? 'is-warning' : null">
             <b-input
               placeholder="Contraseña"
               type="password"
@@ -41,10 +21,7 @@
               required
             ></b-input>
           </b-field>
-          <b-field
-            label="Verificar Contraseña"
-            :type="passwordNotMatch ? 'is-warning' : null"
-          >
+          <b-field label="Verificar Contraseña" :type="passwordNotMatch ? 'is-warning' : null">
             <b-input
               placeholder="Verificar Contraseña"
               type="password"
@@ -58,13 +35,7 @@
         </div>
         <footer class="card-footer">
           <div class="card-footer-item">
-            <b-button
-              type="is-primary"
-              :loading="isLoading"
-              native-type="submit"
-            >
-              Registrarse
-            </b-button>
+            <b-button type="is-primary" :loading="isLoading" native-type="submit">Registrarse</b-button>
           </div>
         </footer>
       </div>
@@ -120,8 +91,9 @@ export default {
         await this.$axios
           .$post(`${process.env.URL_SERVER}/api/auth/signup`, this.newUser)
           .then(({ data }) => {
-            this.$store.dispatch('logInAction', data)
-            this.$cookies.set('token', data.token)
+            this.$store.dispatch('logInAction', data.user)
+            this.$store.dispatch('setFavoritesAction', data.favorites)
+            this.$cookies.set('token', data.user.token)
             this.$router.replace('/')
           })
           .catch(err => {

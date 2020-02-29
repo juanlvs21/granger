@@ -39,7 +39,7 @@
               </div>
             </div>
           </div>
-          <div class="columns">
+          <!-- <div class="columns">
             <div class="column">
               <div class="card">
                 <div class="card-content">
@@ -54,7 +54,7 @@
                 </div>
               </div>
             </div>
-          </div>
+          </div>-->
           <div class="columns">
             <div class="column">
               <div class="card">

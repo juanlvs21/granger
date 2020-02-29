@@ -7,6 +7,7 @@ import uuid from "uuid";
 // Models
 import Book from "../models/book.model";
 import User from "../models/user.model";
+import Favorite from "../models/favorites.model";
 
 // Interface
 import IBook from "../interfaces/IBook";
@@ -256,30 +257,19 @@ export const deleteBook = async (req: Request, res: Response) => {
     fs.removeSync(path.resolve(__dirname, "../", `uploads/cover/${book.slug}`));
     fs.removeSync(path.resolve(__dirname, "../", `uploads/pdf/${book.slug}`));
 
-    await Book.deleteOne({ uuid })
-      .then(resDelete => {
-        // Response
-        msgResponse(
-          res,
-          201,
-          "books/successfully-removed",
-          "Book successfully removed",
-          "Libro eliminado con éxito",
-          null
-        );
-      })
-      .catch(err => {
-        // Response catch error
-        console.log(err);
-        msgResponse(
-          res,
-          500,
-          "book/no-deleted",
-          "Book no deleted",
-          "Libro no eliminado",
-          null
-        );
-      });
+    await Book.deleteOne({ uuid });
+    // The book is also removed from favorites
+    await Favorite.deleteMany({ book_uuid: uuid });
+
+    // Response
+    msgResponse(
+      res,
+      201,
+      "books/successfully-removed",
+      "Book successfully removed",
+      "Libro eliminado con éxito",
+      null
+    );
   } catch (err) {
     // Response catch
     console.log(err);

@@ -1,9 +1,5 @@
 <template>
-  <b-notification
-    :type="type"
-    aria-close-label="Close notification"
-    role="alert"
-  >
+  <b-notification :type="type" :closable="false" role="alert">
     <ul v-if="Array.isArray(message)">
       <li v-for="(msg, i) in message" :key="i">- {{ msg.es }}</li>
     </ul>

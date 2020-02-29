@@ -21,13 +21,6 @@ export const emailSignup = async (
     from: '"Granger 📖" <books@granger.com.ve>', // sender address
     to, // list of receivers
     subject, // Subject line
-    attachments: [
-      {
-        filename: "granger.webp",
-        path: path.resolve(__dirname, "../../../", "src/public/granger.png"),
-        cid: "logo" //my mistake was putting "cid:logo@cid" here!
-      }
-    ],
     html // html body
   });
 };

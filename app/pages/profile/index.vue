@@ -36,15 +36,22 @@
             <div class="card-content">
               <b-tabs>
                 <b-tab-item label="Mis Favoritos" v-if="session">
+                  <!-- Error -->
+                  <Notification
+                    v-if="!favorites.length"
+                    type="is-danger"
+                    message="No posee favoritos agregados"
+                  />
                   <b-collapse
+                    v-else
                     class="card"
-                    v-for="(favorite, index) of session.favorites"
+                    v-for="(favorite, index) of favorites"
                     :key="index"
                     :open="isOpenFavorites == index"
                     @open="isOpenFavorites = index"
                   >
                     <div slot="trigger" slot-scope="props" class="card-header" role="button">
-                      <p class="card-header-title">{{ favorite.title }}</p>
+                      <p class="card-header-title">{{ favorite.book.title }}</p>
                       <div class="card-header-icon">
                         <b-tooltip label="Ir al Libro" position="is-top">
                           <b-button
@@ -52,7 +59,7 @@
                             size="is-small"
                             outlined
                             tag="nuxt-link"
-                            :to="`/books/${favorite.slug}`"
+                            :to="`/books/${favorite.book.slug}`"
                           >
                             <i class="fas fa-eye"></i>
                           </b-button>
@@ -62,7 +69,7 @@
                             type="is-text"
                             size="is-small"
                             outlined
-                            @click="handleRemoveFavorite(favorite.uuid)"
+                            @click="handleRemoveFavorite(favorite.book_uuid)"
                           >
                             <i class="fas fa-heart-broken"></i>
                           </b-button>
@@ -75,23 +82,23 @@
                         <div class="tags">
                           <span
                             class="tag is-info"
-                            v-for="(genre, i) in favorite.genre"
+                            v-for="(genre, i) in favorite.book.genre"
                             :key="i"
                           >{{ genre }}</span>
                         </div>
-                        {{ favorite.description }}
+                        {{ favorite.book.description }}
                         <p>
                           <span>
                             Autor:
                             <b>
-                              <i>{{ favorite.authors}}</i>
+                              <i>{{ favorite.book.authors}}</i>
                             </b>
                           </span>
                           <br />
                           <span>
                             Precio:
                             <b>
-                              <i class="has-text-danger">${{ favorite.price}}</i>
+                              <i class="has-text-danger">${{ favorite.book.price}}</i>
                             </b>
                           </span>
                         </p>
@@ -131,17 +138,20 @@
 <script>
 // Components
 import ModalUpdateProfile from '~/components/modals/profile/Update'
+import Notification from '~/components/core/Notification'
 
 export default {
   name: 'Profile-page',
   transition: 'fade',
+  middleware: 'authRequired',
   head() {
     return {
       title: 'Perfil | Granger'
     }
   },
   components: {
-    ModalUpdateProfile
+    ModalUpdateProfile,
+    Notification
   },
   data() {
     return {
@@ -153,6 +163,9 @@ export default {
   computed: {
     session() {
       return this.$store.state.user
+    },
+    favorites() {
+      return this.$store.state.favorites
     }
   },
   methods: {
@@ -163,31 +176,18 @@ export default {
         confirmText: 'Eliminar',
         onConfirm: async () => {
           this.isLoading = true
-          const data = {
-            user_uuid: this.session.uuid,
-            book_uuid: favorite_uuid
-          }
-
           await this.$axios
-            .$post(`${process.env.URL_SERVER}/api/favorites/remove`, data, {
-              headers: {
-                authorization: this.$store.state.user.token
+            .$post(
+              `${process.env.URL_SERVER}/api/favorites/remove`,
+              { book_uuid: favorite_uuid },
+              {
+                headers: {
+                  authorization: this.$store.state.user.token
+                }
               }
-            })
-            .then(async res => {
-              await this.$axios
-                .post(`${process.env.URL_SERVER}/api/auth/token`, {
-                  token: this.session.token
-                })
-                .then(({ data }) => {
-                  this.$store.dispatch('logInAction', data.data)
-                  this.$buefy.toast.open({
-                    duration: 3000,
-                    message: 'Libro eliminado de favoritos',
-                    position: 'is-bottom-right'
-                  })
-                  this.isOpenFavorites = 1
-                })
+            )
+            .then(({ data }) => {
+              this.$store.dispatch('setFavoritesAction', data)
             })
             .catch(err => {
               console.log(err)

@@ -127,10 +127,19 @@ export default {
           .finally(() => (this.isLoading = false))
       }
     },
-    handleAdd(genre) {
-      const newGenresSelecte = this.genres
-      newGenresSelecte.push(genre)
-      this.genres = newGenresSelecte
+    handleAdd(newGenre) {
+      let genreAlreadyAdded = false
+      this.genres.map(genre => {
+        if (genre === newGenre) {
+          genreAlreadyAdded = true
+        }
+      })
+
+      if (!genreAlreadyAdded) {
+        const newGenresSelecte = this.genres
+        newGenresSelecte.push(newGenre)
+        this.genres = newGenresSelecte
+      }
     },
     handleRemove(genre) {
       const newGenresSelecte = this.genres

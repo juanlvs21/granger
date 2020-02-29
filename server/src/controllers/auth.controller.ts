@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 
 // Models
 import User from "../models/user.model";
+import Favorite from "../models/favorites.model";
 
 // Interfaces
 import IUser from "../interfaces/IUser";
@@ -82,7 +83,6 @@ export const signup = async (req: Request, res: Response) => {
       firstName: savedUser.firstName,
       lastName: savedUser.lastName,
       admin: savedUser.admin,
-      favorites: savedUser.favorites,
       token
     };
 
@@ -100,6 +100,9 @@ export const signup = async (req: Request, res: Response) => {
         console.log("Error: ", err);
       });
 
+    // This user's favorites are searched
+    const favorites = await Favorite.find({ user_uuid: user.uuid });
+
     // Response
     msgResponse(
       res,
@@ -107,7 +110,10 @@ export const signup = async (req: Request, res: Response) => {
       "auth/sign-up-succesfully",
       "User successfully registered",
       "Usuario registrado satisfactoriamente",
-      responseUser
+      {
+        user: responseUser,
+        favorites
+      }
     );
   } catch (err) {
     // Response catch error
@@ -173,9 +179,11 @@ export const signin = async (req: Request, res: Response) => {
       firstName: user.firstName,
       lastName: user.lastName,
       admin: user.admin,
-      favorites: user.favorites,
       token
     };
+
+    // This user's favorites are searched
+    const favorites = await Favorite.find({ user_uuid: user.uuid });
 
     // Response
     msgResponse(
@@ -184,7 +192,10 @@ export const signin = async (req: Request, res: Response) => {
       "auth/sign-in-successfully",
       "Session successfully started",
       "Sesión iniciada correctamente",
-      responseUser
+      {
+        user: responseUser,
+        favorites
+      }
     );
   } catch (err) {
     console.log(err);
@@ -224,9 +235,11 @@ export const token = async (req: Request, res: Response) => {
       firstName: user.firstName,
       lastName: user.lastName,
       admin: user.admin,
-      favorites: user.favorites,
       token: newToken
     };
+
+    // This user's favorites are searched
+    const favorites = await Favorite.find({ user_uuid: user.uuid });
 
     // Response
     msgResponse(
@@ -235,7 +248,10 @@ export const token = async (req: Request, res: Response) => {
       "auth/sign-in-successfully",
       "Session successfully started",
       "Sesión iniciada correctamente",
-      responseUser
+      {
+        user: responseUser,
+        favorites
+      }
     );
   } catch (err) {
     // Response catch error
