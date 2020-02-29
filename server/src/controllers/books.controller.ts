@@ -181,7 +181,8 @@ export const upload = async (req: Request, res: Response) => {
       uuid: uuid.v1(),
       slug: slugify(BookJSONReceived.title),
       cover: cover.name,
-      pdf: pdf.name
+      pdf: pdf.name,
+      uploadedBy: user.uuid
     });
 
     // Saving new book

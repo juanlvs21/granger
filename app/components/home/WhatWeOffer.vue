@@ -4,7 +4,7 @@
       <i :class="[offer.icon]"></i>
     </div>
     <div class="granger__offer-card-content">
-      <h1 class="is-size-4">{{ offer.title }}</h1>
+      <h1 class="is-size-5">{{ offer.title }}</h1>
       <p>{{ offer.subtitle }}</p>
     </div>
   </div>

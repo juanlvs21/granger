@@ -88,7 +88,7 @@ export default {
           }
 
           await this.$axios
-            .$post(`${process.env.URL_SERVER}/api/user/favorites/add`, data, {
+            .$post(`${process.env.URL_SERVER}/api/favorites/add`, data, {
               headers: {
                 authorization: this.$store.state.user.token
               }

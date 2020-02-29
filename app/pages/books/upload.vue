@@ -110,13 +110,7 @@ export default {
         description: '',
         yearPublication: '',
         genre: [],
-        price: 0,
-        uploadedBy: {
-          uuid: this.$store.state.user.uuid,
-          firstName: this.$store.state.user.firstName,
-          lastName: this.$store.state.user.lastName,
-          email: this.$store.state.user.email
-        }
+        price: 0
       },
       files: {
         pdf: null,

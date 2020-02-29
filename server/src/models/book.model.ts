@@ -17,7 +17,7 @@ const bookSchema = new Schema({
   price: { type: Number, required: true },
   stars: { type: Number, required: false, default: 0 },
   scores: { type: [{}], required: false, default: [] },
-  uploadedBy: { type: {}, required: true },
+  uploadedBy: { type: String, required: true },
   created_date: {
     type: String,
     required: true,

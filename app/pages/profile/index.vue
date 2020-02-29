@@ -21,7 +21,12 @@
                 {{session.email}}
               </p>
               <div class="buttons">
-                <b-button type="is-primary" expanded>Actualizar</b-button>
+                <b-button
+                  type="is-primary"
+                  expanded
+                  @click="showModalUpdateProfile = true"
+                >Actualizar</b-button>
+                <b-button type="is-info" expanded>Cambiar Contraseña</b-button>
               </div>
             </div>
           </div>
@@ -65,7 +70,7 @@
                         <b-icon :icon="props.open ? 'menu-down' : 'menu-up'"></b-icon>
                       </div>
                     </div>
-                    <div class="card-content">
+                    <div class="card-content granger__collapse-favorite-content">
                       <div class="content">
                         <div class="tags">
                           <span
@@ -76,9 +81,19 @@
                         </div>
                         {{ favorite.description }}
                         <p>
-                          <b>
-                            <i>{{ favorite.authors}}</i>
-                          </b>
+                          <span>
+                            Autor:
+                            <b>
+                              <i>{{ favorite.authors}}</i>
+                            </b>
+                          </span>
+                          <br />
+                          <span>
+                            Precio:
+                            <b>
+                              <i class="has-text-danger">${{ favorite.price}}</i>
+                            </b>
+                          </span>
                         </p>
                       </div>
                     </div>
@@ -98,11 +113,25 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal Update Profile -->
+    <b-modal
+      :active.sync="showModalUpdateProfile"
+      has-modal-card
+      trap-focus
+      aria-role="dialog"
+      aria-modal
+    >
+      <ModalUpdateProfile :profileData="session" />
+    </b-modal>
     <b-loading :is-full-page="false" :active.sync="isLoading"></b-loading>
   </div>
 </template>
 
 <script>
+// Components
+import ModalUpdateProfile from '~/components/modals/profile/Update'
+
 export default {
   name: 'Profile-page',
   transition: 'fade',
@@ -111,10 +140,14 @@ export default {
       title: 'Perfil | Granger'
     }
   },
+  components: {
+    ModalUpdateProfile
+  },
   data() {
     return {
       isOpenFavorites: 0,
-      isLoading: false
+      isLoading: false,
+      showModalUpdateProfile: false
     }
   },
   computed: {
@@ -136,15 +169,11 @@ export default {
           }
 
           await this.$axios
-            .$post(
-              `${process.env.URL_SERVER}/api/user/favorites/remove`,
-              data,
-              {
-                headers: {
-                  authorization: this.$store.state.user.token
-                }
+            .$post(`${process.env.URL_SERVER}/api/favorites/remove`, data, {
+              headers: {
+                authorization: this.$store.state.user.token
               }
-            )
+            })
             .then(async res => {
               await this.$axios
                 .post(`${process.env.URL_SERVER}/api/auth/token`, {
@@ -185,8 +214,15 @@ export default {
     }
   }
 
-  .tags {
-    margin-bottom: 10px;
+  .granger__collapse-favorite-content {
+    .tags {
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: center;
+    }
+    p {
+      margin-top: 10px;
+    }
   }
 }
 

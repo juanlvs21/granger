@@ -5,7 +5,6 @@ import User from "../models/user.model";
 import Book from "../models/book.model";
 
 // Interfaces
-import IUser from "../interfaces/IUser";
 import IBook from "interfaces/IBook";
 
 // Libs

@@ -27,18 +27,18 @@ export default {
     return {
       items: [
         {
-          title: 'Titulo de relleno 1',
-          subtitle: 'Subtitulo de relleno 1',
+          title: 'Lo último de lo último',
+          subtitle: 'Sentirás el aroma a nuevo desde la pantalla',
           image: 'carousel1.jpg'
         },
         {
-          title: 'Titulo de relleno 2',
-          subtitle: 'Subtitulo de relleno 2',
+          title: 'Los más vendidos del 2019',
+          subtitle: 'Entra que los tenemos todos para ti',
           image: 'carousel2.jpg'
         },
         {
-          title: 'Titulo de relleno 3',
-          subtitle: 'Subtitulo de relleno 3',
+          title: 'Libros que celebran el mes de la mujer',
+          subtitle: '¡Ellas mandan!',
           image: 'carousel3.jpg'
         }
       ]
