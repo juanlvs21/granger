@@ -5,7 +5,7 @@ const welcomeTemplate = (name: string) => {
   <div>
     <div class="granger__mail-content" style="padding: 5% 10%;">
       <div style="text-align: center;">
-        <img src="cid:logo" alt="Granger" style="width: 150px;" />
+        <img src="https://api.granger.juancode.com.ve/public/granger.png" alt="Granger" style="width: 150px;" />
       </div>
       <h2 style="text-align: center;"><i>Gracias por su compra ⭐</i></h2>
       <h3>Hola ${name},</h3>

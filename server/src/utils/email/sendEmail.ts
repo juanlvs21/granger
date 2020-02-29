@@ -44,11 +44,6 @@ export const emailSendBook = async (
     subject, // Subject line
     attachments: [
       {
-        filename: "granger.webp",
-        path: path.resolve(__dirname, "../../../", "src/public/granger.png"),
-        cid: "logo" //my mistake was putting "cid:logo@cid" here!
-      },
-      {
         filename: `${book.title}.pdf`,
         path: path.resolve(
           __dirname,
