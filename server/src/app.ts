@@ -5,6 +5,7 @@ import cors from "cors";
 import fileUpload from "express-fileupload";
 
 import authRoutes from "./routes/auth.routes";
+import userRoutes from "./routes/user.routes";
 import favoritesRoutes from "./routes/favorites.routes";
 import booksRoutes from "./routes/books.routes";
 import genresRoutes from "./routes/genres.routes";
@@ -30,6 +31,7 @@ app.use(cors({ origin: "*" }));
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
 app.use("/api/favorites", favoritesRoutes);
 app.use("/api/books", booksRoutes);
 app.use("/api/genres", genresRoutes);

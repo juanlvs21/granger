@@ -3,7 +3,7 @@
     <div class="container">
       <div class="columns">
         <div class="column is-4">
-          <div class="card granger__card-profile">
+          <div class="card granger__card-profile" v-if="session">
             <div class="card-header">
               <h1 class="card-header-title">Mi Perfil</h1>
             </div>
@@ -26,7 +26,11 @@
                   expanded
                   @click="showModalUpdateProfile = true"
                 >Actualizar</b-button>
-                <b-button type="is-info" expanded>Cambiar Contraseña</b-button>
+                <b-button
+                  type="is-info"
+                  expanded
+                  @click="showModalChangePassword = true"
+                >Cambiar Contraseña</b-button>
               </div>
             </div>
           </div>
@@ -129,7 +133,17 @@
       aria-role="dialog"
       aria-modal
     >
-      <ModalUpdateProfile :profileData="session" />
+      <ModalUpdateProfile />
+    </b-modal>
+    <!-- Modal Change Password -->
+    <b-modal
+      :active.sync="showModalChangePassword"
+      has-modal-card
+      trap-focus
+      aria-role="dialog"
+      aria-modal
+    >
+      <ModalChangePassword />
     </b-modal>
     <b-loading :is-full-page="false" :active.sync="isLoading"></b-loading>
   </div>
@@ -137,8 +151,9 @@
 
 <script>
 // Components
-import ModalUpdateProfile from '~/components/modals/profile/Update'
 import Notification from '~/components/core/Notification'
+import ModalUpdateProfile from '~/components/modals/profile/Update'
+import ModalChangePassword from '~/components/modals/profile/ChangePassword'
 
 export default {
   name: 'Profile-page',
@@ -151,13 +166,15 @@ export default {
   },
   components: {
     ModalUpdateProfile,
-    Notification
+    Notification,
+    ModalChangePassword
   },
   data() {
     return {
       isOpenFavorites: 0,
       isLoading: false,
-      showModalUpdateProfile: false
+      showModalUpdateProfile: false,
+      showModalChangePassword: false
     }
   },
   computed: {

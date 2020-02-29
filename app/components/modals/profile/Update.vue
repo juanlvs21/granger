@@ -5,7 +5,17 @@
         <h2 class="is-size-5">Actualizar Perfil</h2>
       </header>
       <form @submit.prevent="handleSubmit">
-        <section class="modal-card-body"></section>
+        <section class="modal-card-body">
+          <b-field label="Nombre">
+            <b-input v-model="profile.firstName" required></b-input>
+          </b-field>
+          <b-field label="Apellido">
+            <b-input v-model="profile.lastName" required></b-input>
+          </b-field>
+          <b-field label="Correo Electrónico">
+            <b-input type="email" v-model="profile.email" required></b-input>
+          </b-field>
+        </section>
         <footer class="modal-card-foot">
           <button class="button" type="button" @click="$parent.close()">Cancelar</button>
           <b-button type="is-primary" :loading="isLoading" native-type="submit">Actualizar</b-button>
@@ -19,15 +29,39 @@
 <script>
 export default {
   name: 'Modal-Profile-Update',
-  props: ['profileData'],
   data() {
     return {
-      profile: { ...this.profileData },
+      profile: {
+        firstName: this.$store.state.user.firstName,
+        lastName: this.$store.state.user.lastName,
+        email: this.$store.state.user.email
+      },
       isLoading: false
     }
   },
   methods: {
-    handleSubmit() {}
+    async handleSubmit() {
+      this.isLoading = true
+      await this.$axios
+        .$put(`${process.env.URL_SERVER}/api/user`, this.profile, {
+          headers: {
+            authorization: this.$store.state.user.token
+          }
+        })
+        .then(({ data }) => {
+          this.$store.dispatch('logInAction', data)
+          this.$cookies.set('token', data.token)
+
+          this.$buefy.toast.open({
+            duration: 3000,
+            message: `Usuario actualizado exitosamente`,
+            position: 'is-bottom-right'
+          })
+          this.$parent.close()
+        })
+        .catch(err => console.log(err))
+        .finally(() => (this.isLoading = false))
+    }
   }
 }
 </script>

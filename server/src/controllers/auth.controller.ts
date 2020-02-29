@@ -107,7 +107,7 @@ export const signup = async (req: Request, res: Response) => {
     msgResponse(
       res,
       201,
-      "auth/sign-up-succesfully",
+      "auth/sign-up-successfully",
       "User successfully registered",
       "Usuario registrado satisfactoriamente",
       {

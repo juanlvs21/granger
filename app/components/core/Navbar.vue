@@ -76,8 +76,16 @@ export default {
         cancelText: 'Cancelar',
         confirmText: 'Cerrar sesión',
         onConfirm: () => {
+          if (
+            this.$route.path === '/books/upload' ||
+            this.$route.path === '/books/genres' ||
+            this.$route.path === '/profile'
+          ) {
+            this.$router.replace('/')
+          }
           this.$store.dispatch('logInAction', null)
           this.$cookies.remove('token')
+
           this.$buefy.toast.open({
             message: 'Sesión Cerrada',
             position: 'is-bottom-right'
