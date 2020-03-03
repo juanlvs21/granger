@@ -22,9 +22,8 @@
       </div>
     </div>
 
-    <FollowUsInstagram />
-
     <Newsletter />
+    <FollowUsInstagram />
   </div>
 </template>
 
@@ -34,7 +33,7 @@ import Notification from '~/components/core/Notification'
 import CarouselFeatured from '~/components/home/CarouselFeatured'
 import CarouselImages from '~/components/home/carousel-images/Carousel'
 import WhatWeOffer from '~/components/home/WhatWeOffer'
-import Newsletter from '~/components/home/Newsletter'
+import Newsletter from '~/components/newsletter/Newsletter'
 import BookCard from '~/components/books/Card'
 import OfferWeek from '~/components/offer-week/OfferWeek'
 import FollowUsInstagram from '~/components/follow-us-instagram/FollowUsInstagram'

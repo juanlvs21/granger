@@ -7,12 +7,7 @@
     <p>Manténgase actualizado con nuestras últimas novedades y productos.</p>
     <form @submit.prevent="handleSubmit">
       <b-field>
-        <b-input
-          placeholder="Dirección de correo electrónico"
-          type="email"
-          icon="email"
-        >
-        </b-input>
+        <b-input placeholder="Dirección de correo electrónico" type="email" icon="email"></b-input>
         <p class="control">
           <button class="button is-info">Suscribirse</button>
         </p>
@@ -23,7 +18,7 @@
 
 <script>
 export default {
-  name: 'Home-Newsletter',
+  name: 'Newsletter',
   methods: {
     handleSubmit() {
       alert('Suscribiendo')

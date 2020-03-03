@@ -100,7 +100,7 @@
 <script>
 // Components
 import Notification from '~/components/core/Notification'
-import Newsletter from '~/components/home/Newsletter'
+import Newsletter from '~/components/newsletter/Newsletter'
 import Stars from '~/components/books/Stars'
 import ModalConfirmPayment from '~/components/modals/books/ConfirmPayment'
 

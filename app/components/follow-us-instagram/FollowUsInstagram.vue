@@ -15,7 +15,8 @@ export default {
   background-color: var(--info);
   text-align: center;
   padding: 20px 0;
-  margin-top: 50px;
+  // margin-top: 50px;
+  border-bottom: 4px solid #fff;
 
   img {
     height: 150px;

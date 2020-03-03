@@ -96,7 +96,7 @@
 import Notification from '~/components/core/Notification'
 import BookCard from '~/components/books/Card'
 import Stars from '~/components/books/Stars'
-import Newsletter from '~/components/home/Newsletter'
+import Newsletter from '~/components/newsletter/Newsletter'
 
 export default {
   name: 'Books-page',

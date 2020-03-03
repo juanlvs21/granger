@@ -16,7 +16,7 @@
           </template>
         </VueCountdown>
 
-        <b-button type="is-dark" size="is-medium">
+        <b-button type="is-dark" size="is-medium" tag="nuxt-link" :to="`/books/${offer.book.slug}`">
           Ver más
           <i class="fas fa-star"></i>
         </b-button>
