@@ -6,28 +6,23 @@
       <WhatWeOffer v-for="(offer, i) in whatWeOffer" :key="i" :offer="offer" />
     </div>
 
-    <div class="container" v-show="featuredBooks.length">
+    <div class="container" v-if="featuredBooks.length">
       <h1 class="granger__books-title is-size-2 has-text-centered">Libros Destacados</h1>
-      <Notification v-if="errors.loadFeatured" :message="errors.loadFeatured" type="is-danger" />
-      <CarouselFeatured v-else :books="featuredBooks" />
+      <CarouselFeatured :books="featuredBooks" />
     </div>
 
-    <!-- <OfferWeek v-if="errors.offerWeekAvailable" :book="books[0]" /> -->
+    <OfferWeek v-if="offerWeek" :offer="offerWeek" />
 
-    <div class="container" v-show="newBooks.length">
+    <div class="container" v-if="newBooks.length">
       <h1
         class="granger__books-title granger__books-title-new is-size-2 has-text-centered"
       >Nuevos Libros</h1>
       <div class="granger__books-container">
-        <Notification
-          v-if="errors.loadBooks"
-          :message="errors.loadBooks"
-          type="is-danger"
-          style="width: 100%"
-        />
-        <BookCard v-else v-for="book in newBooks" :key="book.uuid" :book="book" />
+        <BookCard v-for="book in newBooks" :key="book.uuid" :book="book" />
       </div>
     </div>
+
+    <FollowUsInstagram />
 
     <Newsletter />
   </div>
@@ -42,6 +37,7 @@ import WhatWeOffer from '~/components/home/WhatWeOffer'
 import Newsletter from '~/components/home/Newsletter'
 import BookCard from '~/components/books/Card'
 import OfferWeek from '~/components/offer-week/OfferWeek'
+import FollowUsInstagram from '~/components/follow-us-instagram/FollowUsInstagram'
 
 export default {
   name: 'Home-Page',
@@ -58,17 +54,14 @@ export default {
     WhatWeOffer,
     Newsletter,
     BookCard,
-    OfferWeek
+    OfferWeek,
+    FollowUsInstagram
   },
   data() {
     return {
-      errors: {
-        loadBooks: null,
-        loadFeatured: null,
-        offerWeekAvailable: false
-      },
       newBooks: [],
       featuredBooks: [],
+      offerWeek: null,
       whatWeOffer: [
         {
           title: 'Descarga inmediata',
@@ -90,14 +83,19 @@ export default {
     }
   },
   async asyncData({ $axios }) {
-    return await $axios
-      .$get(`${process.env.URL_SERVER}/api/books`)
-      .then(res => {
-        return {
-          newBooks: res.data,
-          featuredBooks: []
-        }
-      })
+    try {
+      const getBooks = await $axios.$get(`${process.env.URL_SERVER}/api/books`)
+      const getOfferWeek = await $axios.$get(
+        `${process.env.URL_SERVER}/api/offer-week`
+      )
+
+      return {
+        newBooks: getBooks.data,
+        offerWeek: getOfferWeek.data
+      }
+    } catch (err) {
+      console.log(err)
+    }
   }
 }
 </script>

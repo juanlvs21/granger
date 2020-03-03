@@ -1,7 +1,7 @@
 <template>
   <div class="granger__books-container">
+    <h1 class="granger__books-title is-size-2 has-text-centered">Lista de Libros</h1>
     <div class="container">
-      <h1 class="granger__books-title is-size-2 has-text-centered">Lista de Libros</h1>
       <div class="columns">
         <div class="column is-3">
           <div class="columns" v-show="filteredOut">
@@ -201,7 +201,9 @@ export default {
         books: getBooks.data,
         error
       }
-    } catch (err) {}
+    } catch (err) {
+      console.log(err)
+    }
   }
 }
 </script>

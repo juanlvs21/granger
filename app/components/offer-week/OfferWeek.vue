@@ -1,29 +1,17 @@
 <template>
   <div class="granger__offerweek-container">
     <div class="columns">
-      <div
-        class="column granger__offerweek-text has-text-white has-text-centered"
-      >
-        <h4 class="is-size-4">
-          Oferta de la semana
-        </h4>
-        <h1 class="is-size-3">{{ book.title }}</h1>
+      <div class="column granger__offerweek-text has-text-white has-text-centered">
+        <h4 class="is-size-4">Oferta de la semana</h4>
+        <h1 class="is-size-3">{{ offer.book.title }}</h1>
         <div class="granger_offerweek-prices">
-          <span class="is-size-1">${{ book.price }}</span>
-          <span class="is-size-4 granger_offerweek-priceold">
-            (${{ book.price }})
-          </span>
+          <span class="is-size-1">${{ offer.offer.newPrice }}</span>
+          <span class="is-size-4 granger_offerweek-priceold">(${{ offer.book.price }})</span>
         </div>
-        <VueCountdown
-          v-if="time"
-          :time="time"
-          :interval="100"
-          tag="p"
-          class="is-size-1"
-        >
+        <VueCountdown :time="time" tag="p" class="is-size-1">
           <template slot-scope="props">
             {{ props.days }}D:{{ props.hours }}H:{{ props.minutes }}M:{{
-              props.seconds
+            props.seconds
             }}S
           </template>
         </VueCountdown>
@@ -35,8 +23,8 @@
       </div>
       <div class="column granger__offerweek-cover">
         <img
-          :src="`${server}/uploads/cover/${book.slug}/${book.cover}`"
-          :alt="book.title"
+          :src="`${server}/uploads/cover/${offer.book.slug}/${offer.book.cover}`"
+          :alt="offer.book.title"
         />
       </div>
     </div>
@@ -49,26 +37,19 @@ if (process.client) {
   var VueCountdown = require('@chenfengyuan/vue-countdown')
 }
 
-// Imports
-import moment from 'moment-timezone'
-
 export default {
   name: 'Offer-Week',
-  props: ['book'],
+  props: ['offer'],
   components: {
     VueCountdown
   },
   data() {
     return {
       server: process.env.URL_SERVER,
-      time: null
+      time: this.offer
+        ? new Date(this.offer.offer.lastDay).getTime() - new Date().getTime()
+        : 0
     }
-  },
-  mounted() {
-    const currentDate = new Date(moment().toISOString())
-    const remainingDays = (7 - currentDate.getDay()) * 86400000
-    this.time = new Date(remainingDays)
-    console.log(this.time)
   }
 }
 </script>

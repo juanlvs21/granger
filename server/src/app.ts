@@ -8,6 +8,7 @@ import authRoutes from "./routes/auth.routes";
 import userRoutes from "./routes/user.routes";
 import favoritesRoutes from "./routes/favorites.routes";
 import booksRoutes from "./routes/books.routes";
+import offerWeekRoutes from "./routes/offer-week.routes";
 import genresRoutes from "./routes/genres.routes";
 import searchRoutes from "./routes/search.routes";
 
@@ -34,6 +35,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/favorites", favoritesRoutes);
 app.use("/api/books", booksRoutes);
+app.use("/api/offer-week", offerWeekRoutes);
 app.use("/api/genres", genresRoutes);
 app.use("/api/search", searchRoutes);
 

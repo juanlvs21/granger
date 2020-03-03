@@ -36,10 +36,10 @@ export const signup = async (req: Request, res: Response) => {
     }
 
     // Search user by email
-    const userExists = await User.findOne({ email });
+    const userExist = await User.findOne({ email });
 
     // Email already registered
-    if (userExists)
+    if (userExist)
       return msgResponse(
         res,
         400,

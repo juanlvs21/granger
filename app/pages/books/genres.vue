@@ -13,7 +13,7 @@
             current-page.sync="1"
             pagination-position="bottom"
             default-sort-direction="asc"
-            default-sort="id"
+            default-sort="genre"
             aria-next-label="Next page"
             aria-previous-label="Previous page"
             aria-page-label="Page"

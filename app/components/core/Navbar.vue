@@ -11,6 +11,7 @@
         <template v-if="session && session.admin">
           <b-navbar-dropdown label="Libros">
             <b-navbar-item tag="router-link" to="/books">Todos</b-navbar-item>
+            <b-navbar-item tag="router-link" to="/books/offer-week">Oferta de la semana</b-navbar-item>
             <b-navbar-item tag="router-link" to="/books/upload">Nuevo</b-navbar-item>
             <b-navbar-item tag="router-link" to="/books/genres">Géneros</b-navbar-item>
           </b-navbar-dropdown>
@@ -79,6 +80,7 @@ export default {
           if (
             this.$route.path === '/books/upload' ||
             this.$route.path === '/books/genres' ||
+            this.$route.path === '/books/offer-week' ||
             this.$route.path === '/profile'
           ) {
             this.$router.replace('/')
