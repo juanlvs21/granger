@@ -1,45 +1,49 @@
 <template>
-  <div class="granger__books-container">
-    <h1 class="granger__books-title is-size-2 has-text-centered">Lista de Libros</h1>
-    <div class="container">
-      <div class="columns">
-        <div class="column is-3">
-          <div class="columns" v-show="filteredOut">
-            <div class="column">
-              <b-button
-                type="is-primary"
-                size="is-small"
-                expanded
-                @click="handleRemoveFilters"
-              >Eliminar filtros</b-button>
+  <div>
+    <div class="granger__banner-discount-container">
+      <img src="/images/banner-descuentos.png" alt="Descuentos" />
+    </div>
+    <div class="granger__books-container">
+      <div class="container">
+        <div class="columns">
+          <div class="column is-3">
+            <div class="columns" v-show="filteredOut">
+              <div class="column">
+                <b-button
+                  type="is-primary"
+                  size="is-small"
+                  expanded
+                  @click="handleRemoveFilters"
+                >Eliminar filtros</b-button>
+              </div>
             </div>
-          </div>
-          <div class="columns">
-            <div class="column">
-              <div class="card">
-                <div class="card-content">
-                  <aside class="menu">
-                    <p class="menu-label">Encuentra tú libro</p>
-                    <ul class="menu-list">
-                      <form @submit.prevent="handleSearch">
-                        <b-field>
-                          <b-input
-                            placeholder="Buscar"
-                            type="search"
-                            icon="magnify"
-                            icon-clickable
-                            native-type="submit"
-                            @icon-click="handleSearch"
-                          ></b-input>
-                        </b-field>
-                      </form>
-                    </ul>
-                  </aside>
+            <div class="columns">
+              <div class="column">
+                <div class="card">
+                  <div class="card-content">
+                    <aside class="menu">
+                      <p class="menu-label">Buscar por título</p>
+                      <ul class="menu-list">
+                        <form @submit.prevent="handleSearch">
+                          <b-field>
+                            <b-input
+                              placeholder="Buscar"
+                              type="search"
+                              icon="magnify"
+                              icon-clickable
+                              native-type="submit"
+                              v-model="inputSearch"
+                              @icon-click="handleSearch"
+                            ></b-input>
+                          </b-field>
+                        </form>
+                      </ul>
+                    </aside>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <!-- <div class="columns">
+            <!-- <div class="columns">
             <div class="column">
               <div class="card">
                 <div class="card-content">
@@ -54,40 +58,57 @@
                 </div>
               </div>
             </div>
-          </div>-->
-          <div class="columns">
-            <div class="column">
-              <div class="card">
-                <div class="card-content">
-                  <aside class="menu">
-                    <p class="menu-label">Buscar por Género</p>
-                    <ul class="menu-list granger__menu-list">
-                      <span v-if="error.genres">Sin géneros disponibles</span>
-                      <template v-else>
-                        <li v-for="(genre, i) in genres" :key="i">
-                          <a
-                            @click="handleFilters('genre', genre.genre)"
-                            :class="[selectedGenre === genre.genre ? 'is-active' : null]"
-                          >{{ genre.genre }}</a>
-                        </li>
-                      </template>
-                    </ul>
-                  </aside>
+            </div>-->
+            <div class="columns">
+              <div class="column">
+                <div class="card">
+                  <div class="card-content">
+                    <aside class="menu">
+                      <p class="menu-label">Buscar por Género</p>
+                      <ul class="menu-list granger__menu-list">
+                        <span v-if="error.genres">Sin géneros disponibles</span>
+                        <template v-else>
+                          <li v-for="(genre, i) in genres" :key="i">
+                            <a
+                              @click="handleFilters('genre', genre.genre)"
+                              :class="[selectedGenre === genre.genre ? 'is-active' : null]"
+                            >{{ genre.genre }}</a>
+                          </li>
+                        </template>
+                      </ul>
+                    </aside>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <div class="column is-9">
-          <div class="granger__books-list-container">
-            <Notification v-if="error.books" :message="error.books" type="is-danger" />
-            <BookCard v-else v-for="book in books" :key="book.uuid" :book="book" />
+          <div class="column is-9">
+            <h1 class="granger__books-title is-size-2 has-text-centered">Lista de Libros</h1>
+
+            <div class="granger__books-list-container">
+              <Notification v-if="error.books" :message="error.books" type="is-danger" />
+              <BookCard v-else v-for="book in books" :key="book.uuid" :book="book" />
+
+              <b-pagination
+                :total="paginatedBooks.length"
+                :current.sync="current"
+                :per-page="1"
+                order="is-centered"
+                icon-prev="chevron-left"
+                icon-next="chevron-right"
+                aria-next-label="Next page"
+                aria-previous-label="Previous page"
+                aria-page-label="Page"
+                aria-current-label="Current page"
+                @change="handlePaginator"
+              ></b-pagination>
+            </div>
           </div>
         </div>
       </div>
+      <b-loading :is-full-page="false" :active.sync="isLoading"></b-loading>
+      <Newsletter style="margin-top: 100px;" />
     </div>
-    <b-loading :is-full-page="false" :active.sync="isLoading"></b-loading>
-    <Newsletter style="margin-top: 100px;" />
   </div>
 </template>
 
@@ -115,7 +136,9 @@ export default {
   data() {
     return {
       books: [],
+      paginatedBooks: [],
       genres: [],
+      inputSearch: '',
       isLoading: false,
       error: {
         books: null,
@@ -123,12 +146,30 @@ export default {
       },
       selectedStars: 0,
       selectedGenre: null,
-      filteredOut: false
+      filteredOut: false,
+      current: 1
     }
   },
   methods: {
     async handleSearch() {
-      await alert('Pronto :c')
+      this.isLoading = true
+      this.filteredOut = true
+
+      await this.$axios
+        .$get(`${process.env.URL_SERVER}/api/search/${this.inputSearch}`)
+        .then(({ data }) => {
+          this.paginatedBooks = data
+          this.books = this.paginatedBooks[0]
+          this.paginatedBooks = data
+
+          if (this.paginatedBooks.length === 0) {
+            this.error.books = 'No hay libros disponibles'
+          }
+        })
+        .catch(err => {
+          console.log(err)
+        })
+        .finally(() => (this.isLoading = false))
     },
     async handleFilters(filter, data) {
       this.isLoading = true
@@ -148,10 +189,12 @@ export default {
       await this.$axios
         .$get(`${process.env.URL_SERVER}/api/search/${filter}/${data}`)
         .then(({ data }) => {
-          if (data.length === 0) {
-            this.error.books = 'Resultados no encontrados'
-          } else {
-            this.books = data
+          this.paginatedBooks = data
+          this.books = this.paginatedBooks[0]
+          this.paginatedBooks = data
+
+          if (this.paginatedBooks.length === 0) {
+            this.error.books = 'No hay libros disponibles'
           }
         })
         .catch(err => {
@@ -164,13 +207,17 @@ export default {
       this.error.books = null
       this.selectedStars = 0
       this.selectedGenre = null
+      this.inputSearch = ''
 
       await this.$axios
         .$get(`${process.env.URL_SERVER}/api/books`)
         .then(({ data }) => {
           this.filteredOut = false
-          this.books = data
-          if (this.books.length === 0) {
+          this.paginatedBooks = data
+          this.books = this.paginatedBooks[0]
+          this.paginatedBooks = data
+
+          if (this.paginatedBooks.length === 0) {
             this.error.books = 'No hay libros disponibles'
           }
         })
@@ -178,6 +225,10 @@ export default {
           console.log(err)
         })
         .finally(() => (this.isLoading = false))
+    },
+    handlePaginator(e) {
+      this.current = e
+      this.books = this.paginatedBooks[this.current - 1]
     }
   },
   async asyncData({ $axios }) {
@@ -196,9 +247,12 @@ export default {
         error.books = 'No hay libros disponibles'
       }
 
+      const paginatedBooks = getBooks.data
+
       return {
         genres: getGenres.data,
-        books: getBooks.data,
+        books: paginatedBooks[0],
+        paginatedBooks,
         error
       }
     } catch (err) {
@@ -211,10 +265,6 @@ export default {
 <style scoped lang="scss">
 .granger__books-container {
   padding-top: 30px;
-
-  .granger__books-title {
-    margin-bottom: 30px;
-  }
 
   .granger__menu-list {
     max-height: 400px;
@@ -244,6 +294,11 @@ export default {
   }
 }
 
+.granger__banner-discount-container {
+  width: 100%;
+  background-color: var(--info);
+  text-align: center;
+}
 @media (max-width: 1024px) {
   .granger__books-container {
     .card {

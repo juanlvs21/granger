@@ -40,7 +40,7 @@
               </div>
             </div>
             <footer class="card-footer">
-              <a class="card-footer-item">Delete</a>
+              <a class="card-footer-item" @click="handleDelete">Delete</a>
             </footer>
           </div>
         </div>
@@ -166,6 +166,42 @@ export default {
         console.log(err)
         this.isLoading = false
       }
+    },
+    handleDelete() {
+      this.$buefy.dialog.confirm({
+        message: `¿Desea eliminar la oferta de la semana?`,
+        cancelText: 'Cancelar',
+        confirmText: 'Eliminar',
+        onConfirm: async () => {
+          this.isLoading = true
+          await this.$axios
+            .$delete(
+              `${process.env.URL_SERVER}/api/offer-week/${this.offerWeek.offer._id}`,
+              {
+                headers: {
+                  authorization: this.$store.state.user.token
+                }
+              }
+            )
+            .then(res => {
+              this.handleGetData()
+              this.$buefy.toast.open({
+                duration: 3000,
+                message: `Oferta de la semana eliminada exitosamente`,
+                position: 'is-bottom-right'
+              })
+            })
+            .catch(err => {
+              this.$buefy.toast.open({
+                duration: 3000,
+                type: 'is-danger',
+                message: 'Error inesperado',
+                position: 'is-bottom-right'
+              })
+            })
+            .finally(() => (this.isLoading = false))
+        }
+      })
     }
   },
   async asyncData({ $axios }) {

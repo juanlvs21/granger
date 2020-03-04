@@ -99,6 +99,8 @@ export default {
                 })
                 .catch(err => {
                   console.log(err.response.data)
+                  this.error = 'Error inesperado'
+                  setTimeout(() => (this.error = null), 5000)
                 })
                 .finally(() => (this.isLoading = false))
             }

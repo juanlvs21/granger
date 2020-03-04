@@ -2,7 +2,7 @@
   <div class="granger__book-card animated fadeIn">
     <img
       class="granger__book-card-img"
-      :src="`${server}/uploads/cover/${book.slug}/${book.cover}`"
+      :src="`${server}/uploads/cover/${book.uuid}/${book.cover}`"
       :alt="book.title"
     />
 
@@ -94,6 +94,11 @@ export default {
             )
             .then(({ data }) => {
               this.$store.dispatch('setFavoritesAction', data)
+              this.$buefy.toast.open({
+                duration: 3000,
+                message: `Libro añadido a favoritos`,
+                position: 'is-bottom-right'
+              })
             })
             .catch(err => {
               console.log(err.response.data)
@@ -123,6 +128,11 @@ export default {
             )
             .then(({ data }) => {
               this.$store.dispatch('setFavoritesAction', data)
+              this.$buefy.toast.open({
+                duration: 3000,
+                message: `Libro eliminado de favoritos`,
+                position: 'is-bottom-right'
+              })
             })
             .catch(err => {
               console.log(err)

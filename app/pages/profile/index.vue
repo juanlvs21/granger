@@ -112,11 +112,37 @@
                 </b-tab-item>
 
                 <b-tab-item label="Mis Compras">
-                  Lorem
-                  <br />ipsum
-                  <br />dolor
-                  <br />sit
-                  <br />amet.
+                  <!-- Error -->
+                  <Notification
+                    v-if="!purchases.length"
+                    type="is-danger"
+                    message="No posees ninguna compra realizada, ¡Anímate!"
+                  />
+                  <template v-else>
+                    <div
+                      class="card granger__purchanse-card"
+                      v-for="(purchase, i) of purchases"
+                      :key="i"
+                    >
+                      <div class="card-content">
+                        <h2 class="is-size-5">{{purchase.title}}</h2>
+                        <p>
+                          Fecha de Compra:
+                          {{purchase.date_purchase | formattedDate}}
+                        </p>
+                      </div>
+                      <footer class="card-footer">
+                        <nuxt-link
+                          :to="`/books/${purchase.slug}`"
+                          class="card-footer-item"
+                        >Ver Libro</nuxt-link>
+                        <a
+                          class="card-footer-item"
+                          @click="handleResend(purchase.uuid)"
+                        >Volver a enviar</a>
+                      </footer>
+                    </div>
+                  </template>
                 </b-tab-item>
               </b-tabs>
             </div>
@@ -212,6 +238,55 @@ export default {
             .finally(() => (this.isLoading = false))
         }
       })
+    },
+    async handleResend(uuid) {
+      this.isLoading = true
+
+      await this.$axios
+        .$post(
+          `${process.env.URL_SERVER}/api/books/purchases/resend`,
+          { uuid },
+          {
+            headers: {
+              authorization: this.session.token
+            }
+          }
+        )
+        .then(res => {
+          this.$buefy.toast.open({
+            duration: 3000,
+            message:
+              'Libro reenviado satisfactoriamente, nos vemos en bandeja de entrada',
+            position: 'is-bottom-right'
+          })
+        })
+        .catch(err => {
+          console.log(err.response.data)
+          this.$buefy.toast.open({
+            duration: 3000,
+            message: 'Error inesperado',
+            position: 'is-bottom-right'
+          })
+        })
+        .finally(() => (this.isLoading = false))
+    }
+  },
+  async asyncData({ $axios, store }) {
+    try {
+      const getPurchases = await $axios.$get(
+        `${process.env.URL_SERVER}/api/books/purchases`,
+        {
+          headers: {
+            authorization: store.state.user.token
+          }
+        }
+      )
+
+      return {
+        purchases: getPurchases.data
+      }
+    } catch (err) {
+      console.log(err)
     }
   }
 }
@@ -240,6 +315,10 @@ export default {
     p {
       margin-top: 10px;
     }
+  }
+
+  .granger__purchanse-card {
+    margin-bottom: 20px;
   }
 }
 

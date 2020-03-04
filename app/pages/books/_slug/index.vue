@@ -14,15 +14,25 @@
       <div class="granger__book-title-container">
         <h1 class="is-size-3">{{ book.title }}</h1>
         <div class="granger__book-admin-btn-container" v-if="session && session.admin">
-          <b-button type="is-info" size="is-small" outlined>
-            Editar
+          <b-button
+            type="is-primary"
+            size="is-small"
+            tag="nuxt-link"
+            :to="`/books/${book.slug}/update`"
+            outlined
+          >
+            Actualizar información
             <i class="fas fa-edit"></i>
+          </b-button>
+          <b-button type="is-info" size="is-small" outlined @click="showModalUpdateFiles = true">
+            Actualizar archivos
+            <i class="fas fa-upload"></i>
           </b-button>
           <b-button
             type="is-danger"
             size="is-small"
             outlined
-            :loading="isLoading"
+            :loading="isDeleting"
             @click="handleDelete"
           >
             Eliminar
@@ -34,7 +44,7 @@
         <div class="column is-6 granger__book-cover-container">
           <img
             class="granger__book-img"
-            :src="`${server}/uploads/cover/${book.slug}/${book.cover}`"
+            :src="`${server}/uploads/cover/${book.uuid}/${book.cover}`"
             :alt="book.title"
           />
         </div>
@@ -44,7 +54,13 @@
               <Stars :stars="book.stars" />
             </div>-->
 
-            <p class="is-size-1 has-text-info granger__book-price">$ {{ book.price }}</p>
+            <p class="is-size-1 has-text-info granger__book-price">
+              <span v-if="offerWeek">
+                $ {{ offerWeek.offer.newPrice }}
+                <small>(${{ book.price }})</small>
+              </span>
+              <span v-else>$ {{ book.price }}</span>
+            </p>
 
             <div class="tags">
               <span class="tag is-info" v-for="(genre, i) in book.genre" :key="i">{{ genre }}</span>
@@ -68,10 +84,12 @@
 
             <p>
               Autor/Autores:
-              <b>{{ book.authors }}</b>
+              <b v-if="book.authors == ''">No registrados</b>
+              <b v-else>{{ book.authors }}</b>
             </p>
 
-            <p>{{ book.description }}</p>
+            <p v-if="book.description == ''">Sin descripción</p>
+            <p v-else>{{ book.description }}</p>
           </div>
         </div>
       </div>
@@ -87,10 +105,22 @@
       aria-modal
     >
       <ModalConfirmPayment
+        v-if="book"
         :client_secret="client_secret"
         :payment_intents_id="payment_intents_id"
         :book_uuid="book.uuid"
       />
+    </b-modal>
+
+    <!-- Modal Update Files -->
+    <b-modal
+      :active.sync="showModalUpdateFiles"
+      has-modal-card
+      trap-focus
+      aria-role="dialog"
+      aria-modal
+    >
+      <ModalUpdateFiles v-if="book" :book_uuid="book.uuid" :handleGetBook="handleGetBook" />
     </b-modal>
 
     <Newsletter style="margin-top: 100px;" />
@@ -103,6 +133,7 @@ import Notification from '~/components/core/Notification'
 import Newsletter from '~/components/newsletter/Newsletter'
 import Stars from '~/components/books/Stars'
 import ModalConfirmPayment from '~/components/modals/books/ConfirmPayment'
+import ModalUpdateFiles from '~/components/modals/books/updateFiles'
 
 export default {
   name: 'Books-details',
@@ -116,16 +147,19 @@ export default {
     Notification,
     Newsletter,
     Stars,
-    ModalConfirmPayment
+    ModalConfirmPayment,
+    ModalUpdateFiles
   },
   data() {
     return {
       server: process.env.URL_SERVER,
-      book: {},
+      book: null,
       client_secret: null,
       payment_intents_id: null,
       showModalConfirmPayment: false,
+      showModalUpdateFiles: false,
       isLoading: false,
+      isDeleting: false,
       error: null
     }
   },
@@ -134,13 +168,16 @@ export default {
       return this.$store.state.user
     },
     title() {
-      return this.book ? this.book.title : 'Libro no encontrado'
+      return !this.book || this.error ? 'Libro no encontrado' : this.book.title
     },
+
     isFavorite() {
       // Returns 1 if it exists in the favorites list and 0 if not
-      return this.$store.state.favorites.filter(favorite =>
-        favorite.book_uuid === this.book.uuid ? true : false
-      ).length
+      return !this.book || this.error
+        ? null
+        : this.$store.state.favorites.filter(favorite =>
+            favorite.book_uuid === this.book.uuid ? true : false
+          ).length
     }
   },
   methods: {
@@ -168,15 +205,33 @@ export default {
         })
         .catch(err => {
           console.log(err)
+          console.log(err)
+          this.$buefy.toast.open({
+            duration: 3000,
+            type: 'is-danger',
+            message: `Error al conectar con la pasarela de pagos`,
+            position: 'is-bottom-right'
+          })
+        })
+        .finally(() => (this.isLoading = false))
+    },
+    async handleGetBook() {
+      this.isLoading = true
+
+      await this.$axios
+        .get(`${process.env.URL_SERVER}/api/books/slug/${this.book.slug}`)
+        .then(({ data }) => {
+          this.book = data.data
         })
         .finally(() => (this.isLoading = false))
     },
     handleDelete() {
       this.$buefy.dialog.confirm({
-        message: `¿Desea Eliminar este libro?`,
+        message: `¿Desea eliminar este libro?`,
         cancelText: 'Cancelar',
         confirmText: 'Eliminar',
         onConfirm: async () => {
+          this.isDeleting = true
           this.isLoading = true
           await this.$axios
             .$delete(`${process.env.URL_SERVER}/api/books/${this.book.uuid}`, {
@@ -187,7 +242,7 @@ export default {
             .then(res => {
               this.$buefy.toast.open({
                 duration: 3000,
-                message: `Libro eliminador con satisfactoriamente`,
+                message: `Libro eliminado satisfactoriamente`,
                 position: 'is-bottom-right'
               })
 
@@ -195,20 +250,19 @@ export default {
             })
             .catch(err => {
               console.log(err)
+              this.$buefy.toast.open({
+                duration: 3000,
+                type: 'is-danger',
+                message: `Error desconocido`,
+                position: 'is-bottom-right'
+              })
             })
-            .finally(() => (this.isLoading = false))
+            .finally(() => {
+              this.isDeleting = false
+              this.isLoading = true
+            })
         }
       })
-    },
-    async getBook() {
-      this.isLoading = true
-
-      await this.$axios
-        .get(`${process.env.URL_SERVER}/api/books/slug/${params.slug}`)
-        .then(({ data }) => {
-          this.book = data
-        })
-        .finally(() => (this.isLoading = false))
     },
     handleAddFavorite() {
       this.$buefy.dialog.confirm({
@@ -228,6 +282,12 @@ export default {
               }
             )
             .then(({ data }) => {
+              this.$buefy.toast.open({
+                duration: 3000,
+                message: `Libro añadido a favoritos`,
+                position: 'is-bottom-right'
+              })
+
               this.$store.dispatch('setFavoritesAction', data)
             })
             .catch(err => {
@@ -258,6 +318,11 @@ export default {
             )
             .then(({ data }) => {
               this.$store.dispatch('setFavoritesAction', data)
+              this.$buefy.toast.open({
+                duration: 3000,
+                message: `Libro eliminado de favoritos`,
+                position: 'is-bottom-right'
+              })
             })
             .catch(err => {
               console.log(err)
@@ -268,18 +333,25 @@ export default {
     }
   },
   async asyncData({ $axios, params }) {
-    return await $axios
-      .$get(`${process.env.URL_SERVER}/api/books/slug/${params.slug}`)
-      .then(res => {
-        return { book: res.data }
-      })
-      .catch(err => {
-        if (err.response.data.code === 'books/does-not-exist') {
-          return { error: err.response.data.message.es }
-        } else {
-          return { error: 'Error desconocido, intente de nuevo' }
-        }
-      })
+    try {
+      const getBook = await $axios.$get(
+        `${process.env.URL_SERVER}/api/books/slug/${params.slug}`
+      )
+      const getOfferWeek = await $axios.$get(
+        `${process.env.URL_SERVER}/api/offer-week`
+      )
+
+      return {
+        book: getBook.data,
+        offerWeek: getOfferWeek.data
+      }
+    } catch (err) {
+      if (err.response.data.code === 'books/does-not-exist') {
+        return { error: err.response.data.message.es }
+      } else {
+        return { error: 'Error desconocido, intente de nuevo' }
+      }
+    }
   }
 }
 </script>
@@ -330,8 +402,7 @@ export default {
       margin-top: 10px;
 
       .button {
-        margin: 0 2px;
-        width: 100px;
+        margin: 0px 2px 5px 2px;
       }
     }
   }
@@ -352,6 +423,18 @@ export default {
   .granger__book-details-container {
     .granger__book-price {
       margin-top: 0;
+
+      span {
+        display: flex;
+        align-items: center;
+
+        small {
+          font-size: 24px;
+          padding-bottom: 5px;
+          color: #e16363;
+          text-decoration: line-through;
+        }
+      }
     }
 
     p {

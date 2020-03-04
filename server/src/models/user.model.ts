@@ -1,6 +1,5 @@
 import { Schema, model } from "mongoose";
 import bcrypt from "bcrypt";
-import moment from "moment";
 
 import IUser from "../interfaces/IUser";
 
@@ -13,11 +12,7 @@ const userSchema = new Schema({
   firstName: { type: String },
   lastName: { type: String },
   admin: { type: Boolean, required: true, default: false },
-  created_date: {
-    type: String,
-    required: true,
-    default: moment().toISOString()
-  }
+  created_date: { type: String, required: true }
 });
 
 // Methods

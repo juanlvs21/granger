@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
-import uuid from "uuid";
 import jwt from "jsonwebtoken";
+import uuid from "uuid";
+import moment from "moment";
 
 // Models
 import User from "../models/user.model";
@@ -58,6 +59,7 @@ export const signup = async (req: Request, res: Response) => {
     const user: IUser = new User({
       uuid: uuid.v1(),
       customer_id: customer.id,
+      created_date: moment().toISOString(),
       email,
       password,
       firstName,

@@ -23,7 +23,7 @@
       </div>
       <div class="column granger__offerweek-cover">
         <img
-          :src="`${server}/uploads/cover/${offer.book.slug}/${offer.book.cover}`"
+          :src="`${server}/uploads/cover/${offer.book.uuid}/${offer.book.cover}`"
           :alt="offer.book.title"
         />
       </div>

@@ -9,7 +9,65 @@ import IBook from "../interfaces/IBook";
 
 // Libs
 import msgResponse from "../utils/msgResponse";
+import paginateItems from "../utils/paginateItems";
 
+export const search = async (req: Request, res: Response) => {
+  try {
+    const { search } = req.params;
+
+    let searchWords: any = search.toUpperCase().split(" ");
+
+    let books: any = await Book.find()
+      .where("wordsTitle")
+      .in(searchWords);
+
+    books = books.map((book: IBook) => {
+      let totalStars: number = 0;
+
+      if (book.scores.length > 0) {
+        book.scores.map((score: any) => {
+          totalStars = totalStars + score.star;
+        });
+      }
+
+      return {
+        uuid: book.uuid,
+        authors: book.authors,
+        cover: book.cover,
+        genre: book.genre,
+        pdf: book.pdf,
+        price: book.price,
+        title: book.title,
+        description: book.description,
+        slug: book.slug,
+        stars: totalStars === 0 ? 0 : totalStars / book.scores.length,
+        yearPublication: book.yearPublication
+      };
+    });
+
+    const paginatedBooks = paginateItems(books, 12);
+
+    return msgResponse(
+      res,
+      200,
+      "books/searched-by-genre",
+      "Books searched by genre",
+      "Libros buscados por género",
+      paginatedBooks
+    );
+  } catch (err) {
+    // Response catch error
+    console.log(err);
+    msgResponse(
+      res,
+      500,
+      "books/error-by-performing-the-search",
+      "Error by performing the search",
+      "Error al realizar la búsqueda",
+      null
+    );
+  }
+};
 export const searchStars = async (req: Request, res: Response) => {
   try {
     const { stars } = req.params;
@@ -48,13 +106,15 @@ export const searchStars = async (req: Request, res: Response) => {
       }
     });
 
+    const paginatedBooks = paginateItems(booksResponse, 12);
+
     return msgResponse(
       res,
       200,
       "books/searched-by-stars",
       "Books searched by stars",
       "Libros buscados por estrellas",
-      booksResponse
+      paginatedBooks
     );
   } catch (err) {
     // Response catch error
@@ -89,13 +149,15 @@ export const searchGenre = async (req: Request, res: Response) => {
 
     const books = await Book.find({ genre });
 
+    const paginatedBooks = paginateItems(books, 12);
+
     return msgResponse(
       res,
       200,
       "books/searched-by-genre",
       "Books searched by genre",
       "Libros buscados por género",
-      books
+      paginatedBooks
     );
   } catch (err) {
     // Response catch error

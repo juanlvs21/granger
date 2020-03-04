@@ -26,23 +26,24 @@ export const getOffer = async (req: Request, res: Response) => {
       : null;
 
     // Response
-    const offerResponse = offer
-      ? {
-          book: {
-            uuid: book.uuid,
-            authors: book.authors,
-            cover: book.cover,
-            genre: book.genre,
-            pdf: book.pdf,
-            price: book.price,
-            title: book.title,
-            description: book.description,
-            slug: book.slug,
-            yearPublication: book.yearPublication
-          },
-          offer
-        }
-      : null;
+    const offerResponse =
+      offer && book
+        ? {
+            book: {
+              uuid: book.uuid,
+              authors: book.authors,
+              cover: book.cover,
+              genre: book.genre,
+              pdf: book.pdf,
+              price: book.price,
+              title: book.title,
+              description: book.description,
+              slug: book.slug,
+              yearPublication: book.yearPublication
+            },
+            offer
+          }
+        : null;
 
     // Response catch error
     msgResponse(
@@ -156,7 +157,7 @@ export const addOffer = async (req: Request, res: Response) => {
     msgResponse(
       res,
       500,
-      "offer-week/no-added",
+      "offer-week/not-added",
       "Offer of the week not added",
       "Oferta de la semana no agregada",
       null
@@ -167,60 +168,50 @@ export const addOffer = async (req: Request, res: Response) => {
 export const deleteOffer = async (req: Request, res: Response) => {
   try {
     // Verify that the user is an administrator, otherwise an error returns
-    // const user: any = await User.findOne({ _id: req.userId });
-    // if (!user.admin)
-    //   return msgResponse(
-    //     res,
-    //     403,
-    //     "auth/required-permissions",
-    //     "You do not have permissions to perform this action",
-    //     "No tienes permisos para realizar esta acción",
-    //     null
-    //   );
-    // const id = req.params.id;
-    // if (id.trim() == "")
-    //   return msgResponse(
-    //     res,
-    //     400,
-    //     "genre/genre-id-is-empty",
-    //     "Genre id is empty",
-    //     "El id del género está vacío",
-    //     null
-    //   );
-    // await Genre.deleteOne({ _id: id })
-    //   .then(resDelete => {
-    //     console.log(resDelete);
-    //     // Response
-    //     msgResponse(
-    //       res,
-    //       201,
-    //       "genre/successfully-removed",
-    //       "Genre successfully removed",
-    //       "Género eliminado con éxito",
-    //       null
-    //     );
-    //   })
-    //   .catch(err => {
-    //     // Response catch error
-    //     console.log(err);
-    //     msgResponse(
-    //       res,
-    //       500,
-    //       "genre/no-deleted",
-    //       "Genre no deleted",
-    //       "Género no eliminado",
-    //       null
-    //     );
-    //   });
+    const user: any = await User.findOne({ _id: req.userId });
+    if (!user.admin)
+      return msgResponse(
+        res,
+        403,
+        "auth/required-permissions",
+        "You do not have permissions to perform this action",
+        "No tienes permisos para realizar esta acción",
+        null
+      );
+
+    const _id = req.params.id;
+
+    const offer: any = await Offer.findOne({ _id });
+    if (!offer)
+      return msgResponse(
+        res,
+        403,
+        "offer-week/not-found",
+        "Offer not found",
+        "Oferta no encontrada",
+        null
+      );
+
+    await Offer.deleteOne({ _id });
+
+    // Response
+    msgResponse(
+      res,
+      201,
+      "offer-week/successfully-removed",
+      "Offer week successfully removed",
+      "Oferta de la semana eliminada con éxito",
+      null
+    );
   } catch (err) {
     // Response catch error
     console.log(err);
     msgResponse(
       res,
       500,
-      "genre/no-deleted",
-      "Genre no deleted",
-      "Género no eliminado",
+      "offer-week/not-deleted",
+      "Offer of the week not deleted",
+      "Oferta de la semana no eliminada",
       null
     );
   }

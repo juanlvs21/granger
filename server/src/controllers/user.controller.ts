@@ -4,9 +4,7 @@ import jwt from "jsonwebtoken";
 
 // Models
 import User from "../models/user.model";
-
-// Interface
-import IUser from "../interfaces/IUser";
+import Purchase from "../models/purchase.model";
 
 // Libs
 import msgResponse from "../utils/msgResponse";
@@ -43,6 +41,9 @@ export const updateProfile = async (req: Request, res: Response) => {
         email
       }
     );
+
+    // If the user changes the email, it is updated on purchases
+    await Purchase.updateMany({ user_uuid: user.uuid }, { user_email: email });
 
     // The user is searched again to load the updated data
     const userUpdated: any = await User.findOne({ uuid: user.uuid });

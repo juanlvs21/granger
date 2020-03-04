@@ -7,21 +7,76 @@
     <p>Manténgase actualizado con nuestras últimas novedades y productos.</p>
     <form @submit.prevent="handleSubmit">
       <b-field>
-        <b-input placeholder="Dirección de correo electrónico" type="email" icon="email"></b-input>
+        <b-input
+          placeholder="Dirección de correo electrónico"
+          type="email"
+          icon="email"
+          v-model="email"
+        ></b-input>
         <p class="control">
           <button class="button is-info">Suscribirse</button>
         </p>
       </b-field>
     </form>
+    <b-loading :is-full-page="false" :active.sync="isLoading"></b-loading>
   </div>
 </template>
 
 <script>
 export default {
   name: 'Newsletter',
+  data() {
+    return {
+      email: '',
+      isLoading: false
+    }
+  },
+  computed: {
+    session() {
+      return this.$store.state.user
+    }
+  },
   methods: {
-    handleSubmit() {
-      alert('Suscribiendo')
+    async handleSubmit() {
+      this.isLoading = true
+
+      await this.$axios
+        .$post(
+          `${process.env.URL_SERVER}/api/newsletter`,
+          { email: this.email },
+          {
+            headers: {
+              authorization: this.$store.state.user.token
+            }
+          }
+        )
+        .then(res => {
+          console.log(res)
+          this.email = ''
+          this.$buefy.toast.open({
+            duration: 3000,
+            message: `¡Felicidades! Ahora podemos informarte periodicamente`,
+            position: 'is-bottom-right'
+          })
+        })
+        .catch(err => {
+          console.log(err.response.data)
+          let error = 'Error desconocido'
+          if (
+            err.response.data.code === 'newsletter/error-already-subscribed'
+          ) {
+            error = err.response.data.message.es
+          }
+          this.$buefy.toast.open({
+            duration: 3000,
+            type: 'is-danger',
+            message: error,
+            position: 'is-bottom-right'
+          })
+        })
+        .finally(() => {
+          this.isLoading = false
+        })
     }
   }
 }

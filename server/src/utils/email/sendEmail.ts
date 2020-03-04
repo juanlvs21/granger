@@ -41,9 +41,32 @@ export const emailSendBook = async (
         path: path.resolve(
           __dirname,
           "../../",
-          `uploads/pdf/${book.slug}/${book.pdf}`
-        ),
-        cid: "logo" //my mistake was putting "cid:logo@cid" here!
+          `uploads/pdf/${book.uuid}/${book.pdf}`
+        )
+      }
+    ],
+    html // html body
+  });
+};
+
+export const emailDeleteBook = async (
+  to: [string],
+  subject: string,
+  html: string,
+  book: any
+) => {
+  await transporter.sendMail({
+    from: '"Granger 📖" <books@granger.com.ve>', // sender address
+    to, // list of receivers
+    subject, // Subject line
+    attachments: [
+      {
+        filename: `${book.title}.pdf`,
+        path: path.resolve(
+          __dirname,
+          "../../",
+          `uploads/pdf/${book.uuid}/${book.pdf}`
+        )
       }
     ],
     html // html body

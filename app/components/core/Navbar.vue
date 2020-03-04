@@ -79,7 +79,7 @@ export default {
         onConfirm: () => {
           if (
             this.$route.path === '/books/upload' ||
-            this.$route.path === '/books/genres' ||
+            this.$route.name === 'books-slug-edit' ||
             this.$route.path === '/books/offer-week' ||
             this.$route.path === '/profile'
           ) {

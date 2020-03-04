@@ -4,6 +4,7 @@ export default interface IBook extends Document {
   _id: string;
   uuid: string;
   title: string;
+  wordsTitle: [string];
   slug: string;
   description: string;
   authors?: string;

@@ -83,7 +83,9 @@ export default {
   },
   async asyncData({ $axios }) {
     try {
-      const getBooks = await $axios.$get(`${process.env.URL_SERVER}/api/books`)
+      const getBooks = await $axios.$get(
+        `${process.env.URL_SERVER}/api/books/recent`
+      )
       const getOfferWeek = await $axios.$get(
         `${process.env.URL_SERVER}/api/offer-week`
       )
