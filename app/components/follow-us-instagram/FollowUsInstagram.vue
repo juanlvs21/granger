@@ -22,4 +22,13 @@ export default {
     height: 150px;
   }
 }
+
+@media (max-width: 768px) {
+  .granger__follow-us-ig {
+    img {
+      height: auto;
+      width: 100%;
+    }
+  }
+}
 </style>

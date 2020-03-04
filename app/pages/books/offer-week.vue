@@ -40,7 +40,7 @@
               </div>
             </div>
             <footer class="card-footer">
-              <a class="card-footer-item" @click="handleDelete">Delete</a>
+              <a class="card-footer-item" @click="handleDelete">Eliminar Oferta</a>
             </footer>
           </div>
         </div>
@@ -142,7 +142,7 @@ export default {
 
       try {
         const getBooks = await this.$axios.$get(
-          `${process.env.URL_SERVER}/api/books`
+          `${process.env.URL_SERVER}/api/books/no-pagination`
         )
         const getOfferWeek = await this.$axios.$get(
           `${process.env.URL_SERVER}/api/offer-week`
@@ -206,7 +206,9 @@ export default {
   },
   async asyncData({ $axios }) {
     try {
-      const getBooks = await $axios.$get(`${process.env.URL_SERVER}/api/books`)
+      const getBooks = await $axios.$get(
+        `${process.env.URL_SERVER}/api/books/no-pagination`
+      )
       const getOfferWeek = await $axios.$get(
         `${process.env.URL_SERVER}/api/offer-week`
       )

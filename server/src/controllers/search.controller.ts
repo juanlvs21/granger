@@ -17,33 +17,17 @@ export const search = async (req: Request, res: Response) => {
 
     let searchWords: any = search.toUpperCase().split(" ");
 
-    let books: any = await Book.find()
+    const books: any = await Book.find()
       .where("wordsTitle")
-      .in(searchWords);
-
-    books = books.map((book: IBook) => {
-      let totalStars: number = 0;
-
-      if (book.scores.length > 0) {
-        book.scores.map((score: any) => {
-          totalStars = totalStars + score.star;
-        });
-      }
-
-      return {
-        uuid: book.uuid,
-        authors: book.authors,
-        cover: book.cover,
-        genre: book.genre,
-        pdf: book.pdf,
-        price: book.price,
-        title: book.title,
-        description: book.description,
-        slug: book.slug,
-        stars: totalStars === 0 ? 0 : totalStars / book.scores.length,
-        yearPublication: book.yearPublication
-      };
-    });
+      .in(searchWords)
+      .select({
+        _id: 0,
+        scores: 0,
+        created_date: 0,
+        uploadedBy: 0,
+        wordsTitle: 0,
+        __v: 0
+      });
 
     const paginatedBooks = paginateItems(books, 12);
 
@@ -147,7 +131,14 @@ export const searchGenre = async (req: Request, res: Response) => {
         null
       );
 
-    const books = await Book.find({ genre });
+    const books = await Book.find({ genre }).select({
+      _id: 0,
+      scores: 0,
+      created_date: 0,
+      uploadedBy: 0,
+      wordsTitle: 0,
+      __v: 0
+    });
 
     const paginatedBooks = paginateItems(books, 12);
 

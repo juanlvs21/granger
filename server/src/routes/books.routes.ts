@@ -7,6 +7,7 @@ import {
   paymentIntents,
   paymentSucceeded,
   getAll,
+  getAllNoPagination,
   getRecent,
   getWithSlug,
   getPurchases,
@@ -21,6 +22,7 @@ import { validateToken } from "../utils/validateToken";
 const router: Router = Router();
 
 router.get("/", getAll);
+router.get("/no-pagination", getAllNoPagination);
 router.get("/recent", getRecent);
 router.get("/slug/:slug", getWithSlug);
 router.get("/purchases", [validateToken], getPurchases);

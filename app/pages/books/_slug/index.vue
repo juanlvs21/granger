@@ -55,7 +55,7 @@
             </div>-->
 
             <p class="is-size-1 has-text-info granger__book-price">
-              <span v-if="offerWeek">
+              <span v-if="offerWeek && offerWeek.book.uuid == book.uuid">
                 $ {{ offerWeek.offer.newPrice }}
                 <small>(${{ book.price }})</small>
               </span>
@@ -468,9 +468,10 @@ export default {
     .granger__book-details-container {
       padding: 20px;
 
-      .granger__book-stars-container,
       .granger__book-price {
-        text-align: center;
+        span {
+          justify-content: center;
+        }
       }
 
       .tags {

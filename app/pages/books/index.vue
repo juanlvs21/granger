@@ -275,6 +275,7 @@ export default {
 
   .granger__menu-list::-webkit-scrollbar {
     width: 5px;
+    margin-right: 2px;
   }
 
   .granger__menu-list::-webkit-scrollbar-track {
@@ -291,6 +292,7 @@ export default {
 
   .granger__books-list-container {
     text-align: center;
+    margin-top: 20px;
   }
 }
 

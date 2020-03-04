@@ -569,30 +569,13 @@ export const getPurchases = async (req: Request, res: Response) => {
 
 export const getAll = async (req: Request, res: Response) => {
   try {
-    let books: any = await Book.find();
-    // Values ​​that should not be sent are discarded
-    books = books.map((book: IBook) => {
-      let totalStars: number = 0;
-
-      if (book.scores.length > 0) {
-        book.scores.map((score: any) => {
-          totalStars = totalStars + score.star;
-        });
-      }
-
-      return {
-        uuid: book.uuid,
-        authors: book.authors,
-        cover: book.cover,
-        genre: book.genre,
-        pdf: book.pdf,
-        price: book.price,
-        title: book.title,
-        description: book.description,
-        slug: book.slug,
-        stars: totalStars === 0 ? 0 : totalStars / book.scores.length,
-        yearPublication: book.yearPublication
-      };
+    const books: any = await Book.find().select({
+      _id: 0,
+      scores: 0,
+      created_date: 0,
+      uploadedBy: 0,
+      wordsTitle: 0,
+      __v: 0
     });
 
     const paginatedBooks = paginateItems(books, 12);
@@ -619,35 +602,52 @@ export const getAll = async (req: Request, res: Response) => {
   }
 };
 
+export const getAllNoPagination = async (req: Request, res: Response) => {
+  try {
+    const books: any = await Book.find().select({
+      _id: 0,
+      scores: 0,
+      created_date: 0,
+      uploadedBy: 0,
+      wordsTitle: 0,
+      __v: 0
+    });
+
+    // Response
+    msgResponse(
+      res,
+      200,
+      "books/get-all",
+      "Get all the books",
+      "Obtener todos los libros",
+      books
+    );
+  } catch (err) {
+    // Response catch error
+    msgResponse(
+      res,
+      500,
+      "books/error-getting-all",
+      "Error getting all books",
+      "Error al obtener todos los libros",
+      null
+    );
+  }
+};
+
 export const getRecent = async (req: Request, res: Response) => {
   try {
-    let books: any = await Book.find()
+    const books: any = await Book.find()
       .sort({ _id: -1 })
-      .limit(5);
-    // Values ​​that should not be sent are discarded
-    books = books.map((book: IBook) => {
-      let totalStars: number = 0;
-
-      if (book.scores.length > 0) {
-        book.scores.map((score: any) => {
-          totalStars = totalStars + score.star;
-        });
-      }
-
-      return {
-        uuid: book.uuid,
-        authors: book.authors,
-        cover: book.cover,
-        genre: book.genre,
-        pdf: book.pdf,
-        price: book.price,
-        title: book.title,
-        description: book.description,
-        slug: book.slug,
-        stars: totalStars === 0 ? 0 : totalStars / book.scores.length,
-        yearPublication: book.yearPublication
-      };
-    });
+      .limit(5)
+      .select({
+        _id: 0,
+        scores: 0,
+        created_date: 0,
+        uploadedBy: 0,
+        wordsTitle: 0,
+        __v: 0
+      });
 
     // Response
     msgResponse(
@@ -675,7 +675,14 @@ export const getWithSlug = async (req: Request, res: Response) => {
   try {
     const { slug } = req.params;
 
-    let book: any = await Book.findOne({ slug });
+    let book: any = await Book.findOne({ slug }).select({
+      _id: 0,
+      scores: 0,
+      created_date: 0,
+      uploadedBy: 0,
+      wordsTitle: 0,
+      __v: 0
+    });
 
     // It is verified that the book exists
     if (!book)
@@ -687,28 +694,6 @@ export const getWithSlug = async (req: Request, res: Response) => {
         "El libro no existe",
         null
       );
-
-    let totalStars: number = 0;
-
-    if (book.scores.length > 0) {
-      book.scores.map((score: any) => {
-        totalStars = totalStars + score.star;
-      });
-    }
-
-    book = {
-      uuid: book.uuid,
-      authors: book.authors,
-      cover: book.cover,
-      genre: book.genre,
-      pdf: book.pdf,
-      price: book.price,
-      title: book.title,
-      description: book.description,
-      slug: book.slug,
-      stars: totalStars === 0 ? 0 : totalStars / book.scores.length,
-      yearPublication: book.yearPublication
-    };
 
     // Response
     msgResponse(
