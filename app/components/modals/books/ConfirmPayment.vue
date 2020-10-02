@@ -22,11 +22,24 @@
         </section>
         <footer class="modal-card-foot">
           <template v-if="successfulPurchase">
-            <button class="button is-primary" type="button" @click="$parent.close()">Aceptar</button>
+            <button
+              class="button is-primary"
+              type="button"
+              @click="$parent.close()"
+            >
+              Aceptar
+            </button>
           </template>
           <template v-else>
-            <button class="button" type="button" @click="$parent.close()">Cancelar</button>
-            <b-button type="is-primary" :loading="isLoading" native-type="submit">Confirmar</b-button>
+            <button class="button" type="button" @click="$parent.close()">
+              Cancelar
+            </button>
+            <b-button
+              type="is-primary"
+              :loading="isLoading"
+              native-type="submit"
+              >Confirmar</b-button
+            >
           </template>
         </footer>
         <b-loading :is-full-page="false" :active.sync="isLoading"></b-loading>

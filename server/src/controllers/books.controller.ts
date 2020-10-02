@@ -23,7 +23,7 @@ import paginateItems from "../utils/paginateItems";
 // Stripe
 import Stripe from "stripe";
 const stripe = new Stripe(process.env.STRIPE_SK || "", {
-  apiVersion: "2019-12-03"
+  apiVersion: "2019-12-03",
 });
 
 // sendEmail
@@ -49,7 +49,7 @@ export const upload = async (req: Request, res: Response) => {
     const BookJSONReceived = JSON.parse(req.body.book);
 
     const existBook = await Book.findOne({
-      slug: slugify(BookJSONReceived.title)
+      slug: slugify(BookJSONReceived.title),
     });
 
     // It is verified that the book does not exist(through the 'slug', that is to say that there are not two books with the same title)
@@ -191,7 +191,7 @@ export const upload = async (req: Request, res: Response) => {
       created_date: moment().toISOString(),
       cover: cover.name,
       pdf: pdf.name,
-      uploadedBy: user.uuid
+      uploadedBy: user.uuid,
     });
 
     // Saving new book
@@ -282,7 +282,7 @@ export const deleteBook = async (req: Request, res: Response) => {
           title: book.title,
           slug: book.slug,
           uuid: book.uuid,
-          pdf: book.pdf
+          pdf: book.pdf,
         }
       );
       await Purchase.deleteMany({ book_uuid: book.uuid });
@@ -316,12 +316,13 @@ export const deleteBook = async (req: Request, res: Response) => {
 };
 
 export const paymentIntents = async (req: Request, res: Response) => {
+  console.log(process.env.STRIPE_SK);
   try {
     const { user_email, book_uuid } = req.body;
 
     const user: any = await User.findOne({
       email: user_email,
-      _id: req.userId
+      _id: req.userId,
     });
     const book: any = await Book.findOne({ uuid: book_uuid });
 
@@ -354,7 +355,7 @@ export const paymentIntents = async (req: Request, res: Response) => {
         currency: "usd",
         receipt_email: user.email,
         customer: user.customer_id,
-        description: `Purchase of the book: ${book.title}`
+        description: `Purchase of the book: ${book.title}`,
       })
       .then(({ id, client_secret }) => {
         // Response
@@ -367,7 +368,7 @@ export const paymentIntents = async (req: Request, res: Response) => {
           { id, client_secret }
         );
       })
-      .catch(err => {
+      .catch((err) => {
         // Response catch error
         msgResponse(
           res,
@@ -402,7 +403,7 @@ export const paymentSucceeded = async (req: Request, res: Response) => {
           const book: any = await Book.findOne({ uuid: book_uuid });
           const user: any = await User.findOne({
             email: user_email,
-            _id: req.userId
+            _id: req.userId,
           });
 
           // If the user does not exist
@@ -438,9 +439,9 @@ export const paymentSucceeded = async (req: Request, res: Response) => {
               title: book.title,
               authors: book.authors,
               slug: book.slug,
-              pdf: book.pdf
+              pdf: book.pdf,
             },
-            date_purchase: moment().toISOString()
+            date_purchase: moment().toISOString(),
           });
 
           await purchase.save();
@@ -454,13 +455,13 @@ export const paymentSucceeded = async (req: Request, res: Response) => {
               uuid: book.uuid,
               title: book.title,
               slug: book.slug,
-              pdf: book.pdf
+              pdf: book.pdf,
             }
           )
-            .then(res => {
+            .then((res) => {
               console.log("Book - Email Send");
             })
-            .catch(err => {
+            .catch((err) => {
               msgResponse(
                 res,
                 500,
@@ -491,7 +492,7 @@ export const paymentSucceeded = async (req: Request, res: Response) => {
           );
         }
       })
-      .catch(err => {
+      .catch((err) => {
         // Response catch error
         console.log(err);
         msgResponse(
@@ -532,7 +533,7 @@ export const getPurchases = async (req: Request, res: Response) => {
       );
 
     const purchases: IPurchase[] = await Purchase.find({
-      user_uuid: user.uuid
+      user_uuid: user.uuid,
     });
 
     const response = purchases.map((purchase: any) => {
@@ -541,7 +542,7 @@ export const getPurchases = async (req: Request, res: Response) => {
         date_purchase: purchase.date_purchase,
         title: purchase.book.title,
         authors: purchase.book.authors,
-        slug: purchase.book.slug
+        slug: purchase.book.slug,
       };
     });
 
@@ -575,10 +576,10 @@ export const getAll = async (req: Request, res: Response) => {
       created_date: 0,
       uploadedBy: 0,
       wordsTitle: 0,
-      __v: 0
+      __v: 0,
     });
 
-    const paginatedBooks = paginateItems(books, 12);
+    const paginatedBooks = paginateItems(books, 8);
 
     // Response
     msgResponse(
@@ -610,7 +611,7 @@ export const getAllNoPagination = async (req: Request, res: Response) => {
       created_date: 0,
       uploadedBy: 0,
       wordsTitle: 0,
-      __v: 0
+      __v: 0,
     });
 
     // Response
@@ -637,17 +638,14 @@ export const getAllNoPagination = async (req: Request, res: Response) => {
 
 export const getRecent = async (req: Request, res: Response) => {
   try {
-    const books: any = await Book.find()
-      .sort({ _id: -1 })
-      .limit(5)
-      .select({
-        _id: 0,
-        scores: 0,
-        created_date: 0,
-        uploadedBy: 0,
-        wordsTitle: 0,
-        __v: 0
-      });
+    const books: any = await Book.find().sort({ _id: -1 }).limit(5).select({
+      _id: 0,
+      scores: 0,
+      created_date: 0,
+      uploadedBy: 0,
+      wordsTitle: 0,
+      __v: 0,
+    });
 
     // Response
     msgResponse(
@@ -681,7 +679,7 @@ export const getWithSlug = async (req: Request, res: Response) => {
       created_date: 0,
       uploadedBy: 0,
       wordsTitle: 0,
-      __v: 0
+      __v: 0,
     });
 
     // It is verified that the book exists
@@ -769,13 +767,13 @@ export const resendBook = async (req: Request, res: Response) => {
         uuid: book.uuid,
         title: book.title,
         slug: book.slug,
-        pdf: book.pdf
+        pdf: book.pdf,
       }
     )
-      .then(res => {
+      .then((res) => {
         console.log("Book - Email Send");
       })
-      .catch(err => {
+      .catch((err) => {
         msgResponse(
           res,
           500,
@@ -901,7 +899,7 @@ export const updateInfoBook = async (req: Request, res: Response) => {
       { uuid: book.uuid },
       {
         ...book,
-        slug: slugify(book.title)
+        slug: slugify(book.title),
       }
     );
 
@@ -1020,7 +1018,7 @@ export const updateFilesBook = async (req: Request, res: Response) => {
       { uuid: book.uuid },
       {
         cover: cover.name,
-        pdf: pdf.name
+        pdf: pdf.name,
       }
     );
 

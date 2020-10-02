@@ -1,19 +1,27 @@
 <template>
   <div class="granger__book-container">
-    <div class="container has-text-centered granger__book-not-found" v-if="error">
+    <div
+      class="container has-text-centered granger__book-not-found"
+      v-if="error"
+    >
       <!-- Error -->
       <img src="/images/book-not-found.webp" alt="Book not found" />
       <h1 class="is-size-1">¡OOPS!</h1>
       <h2 class="is-size-2">Libro no encontrado</h2>
       <div class="granger__book-not-found-btn-container">
         <b-button tag="nuxt-link" to="/" type="is-info">Ir al inicio</b-button>
-        <b-button tag="nuxt-link" to="/books" type="is-primary">Ver todos los libros</b-button>
+        <b-button tag="nuxt-link" to="/books" type="is-primary"
+          >Ver todos los libros</b-button
+        >
       </div>
     </div>
     <div class="container" v-else>
       <div class="granger__book-title-container">
         <h1 class="is-size-3">{{ book.title }}</h1>
-        <div class="granger__book-admin-btn-container" v-if="session && session.admin">
+        <div
+          class="granger__book-admin-btn-container"
+          v-if="session && session.admin"
+        >
           <b-button
             type="is-primary"
             size="is-small"
@@ -24,7 +32,12 @@
             Actualizar información
             <i class="fas fa-edit"></i>
           </b-button>
-          <b-button type="is-info" size="is-small" outlined @click="showModalUpdateFiles = true">
+          <b-button
+            type="is-info"
+            size="is-small"
+            outlined
+            @click="showModalUpdateFiles = true"
+          >
             Actualizar archivos
             <i class="fas fa-upload"></i>
           </b-button>
@@ -63,23 +76,32 @@
             </p>
 
             <div class="tags">
-              <span class="tag is-info" v-for="(genre, i) in book.genre" :key="i">{{ genre }}</span>
+              <span
+                class="tag is-info"
+                v-for="(genre, i) in book.genre"
+                :key="i"
+                >{{ genre }}</span
+              >
             </div>
 
             <div class="granger__book-buy" v-if="session">
-              <b-button type="is-primary" rounded @click="handlePaymentIntent">Comprar Libro</b-button>
+              <b-button type="is-primary" rounded @click="handlePaymentIntent"
+                >Comprar Libro</b-button
+              >
               <b-button
                 v-if="isFavorite"
                 type="is-ligth"
                 rounded
                 @click="handleRemoveFavorite"
-              >Eliminar de Favoritos</b-button>
+                >Eliminar de Favoritos</b-button
+              >
               <b-button
                 v-else
                 type="is-ligth"
                 rounded
                 @click="handleAddFavorite"
-              >Agregar a Favoritos</b-button>
+                >Agregar a Favoritos</b-button
+              >
             </div>
 
             <p>
@@ -120,7 +142,11 @@
       aria-role="dialog"
       aria-modal
     >
-      <ModalUpdateFiles v-if="book" :book_uuid="book.uuid" :handleGetBook="handleGetBook" />
+      <ModalUpdateFiles
+        v-if="book"
+        :book_uuid="book.uuid"
+        :handleGetBook="handleGetBook"
+      />
     </b-modal>
 
     <Newsletter style="margin-top: 100px;" />

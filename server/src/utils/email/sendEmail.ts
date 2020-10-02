@@ -1,15 +1,12 @@
 import nodemailer from "nodemailer";
 import path from "path";
 
-// create reusable transporter object using the default SMTP transport
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true, // use SSL
+  service: "gmail",
   auth: {
     user: process.env.MAIL_ACCOUNT,
-    pass: process.env.MAIL_PASSWORT
-  }
+    pass: process.env.MAIL_PASSWORT,
+  },
 });
 
 export const emailSignup = async (
@@ -21,7 +18,7 @@ export const emailSignup = async (
     from: '"Granger 📖" <books@granger.com.ve>', // sender address
     to, // list of receivers
     subject, // Subject line
-    html // html body
+    html, // html body
   });
 };
 
@@ -42,10 +39,10 @@ export const emailSendBook = async (
           __dirname,
           "../../",
           `uploads/pdf/${book.uuid}/${book.pdf}`
-        )
-      }
+        ),
+      },
     ],
-    html // html body
+    html, // html body
   });
 };
 
@@ -66,9 +63,9 @@ export const emailDeleteBook = async (
           __dirname,
           "../../",
           `uploads/pdf/${book.uuid}/${book.pdf}`
-        )
-      }
+        ),
+      },
     ],
-    html // html body
+    html, // html body
   });
 };
